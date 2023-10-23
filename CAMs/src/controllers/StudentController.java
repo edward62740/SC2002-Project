@@ -240,6 +240,11 @@ public class StudentController extends UserController {
 			if (input.strip().equals("C"))
 				return;
 		} while (input == null);
+		if(requestStudentService.isQueuedEnquiryForUser(id)) 
+		{
+			System.out.println("You already have a pending enquiry!");
+			return;
+		}
 		requestStudentService.createNewRequest(input.strip(), id);
 		System.out.println("Operation successful.");
 	}
@@ -249,8 +254,9 @@ public class StudentController extends UserController {
 		ArrayList<Request> req = requestStudentService.getRequestsByUser(AuthStore.getCurUser().getUserID());
 		for(Request r : req)
 		{
-			RequestView.printCamp(r);
+			RequestView.printReq(r);
 		}
+		if(req.size() == 0) System.out.println("You did not submit any enquiries. ");
 		
 	}
 }

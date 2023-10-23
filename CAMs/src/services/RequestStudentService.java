@@ -27,6 +27,17 @@ public class RequestStudentService {
 		return false;
 	}
 	
+	public boolean isQueuedEnquiryForUser(Integer campId)
+	{
+		Student s = (Student) AuthStore.getCurUser();
+		if(DataStore.getCamps().containsKey(campId))
+		{
+			SimpleEntry<Integer, String> p = new SimpleEntry<Integer, String>(campId, s.getUserID());
+			if(DataStore.getRequests().containsKey(p)) return true;
+		}
+		return false;
+	}
+	
 	public ArrayList<Request> getRequestsByCamp(Integer campId)
 	{
 		HashMap<SimpleEntry<Integer,String>, Request> requests = DataStore.getRequests();

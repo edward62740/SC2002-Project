@@ -5,14 +5,19 @@ import java.util.Scanner;
 
 import services.AuthStudentService;
 import services.CampStudentService;
+import services.RequestCCMService;
+import services.RequestStudentService;
 import stores.AuthStore;
 import views.CampView;
+import views.RequestView;
 import enums.UserGroup;
 import models.Camp;
+import models.Request;
 
 public class CCMController extends UserController {
 
 	private static CampStudentService campStudentService = new CampStudentService();
+	private static RequestCCMService requestCCMService = new RequestCCMService();
 
 	public static boolean run() {
 		int c = 0;
@@ -63,15 +68,16 @@ public class CCMController extends UserController {
 			registerForCamp();
 			break;
 		case 4:
-			registerForCommittee();
-			break;
-		case 5:
 			deregisterCamp();
 			break;
-		case 6:
+		case 5:
 			updatePassword();
 			break;
+		case 6:
+			viewReplyEnquiry();
+			break;
 		case 7:
+			viewReplyEnquiry();
 			System.out.println("ERROR NOT IMPLEMENTED");
 			break;
 		case 8:
@@ -208,5 +214,71 @@ public class CCMController extends UserController {
 				System.out.println("Deregistration successful. You will not be eligible for re-registration.");
 		} else
 			System.out.println("You are not registered from this camp or does not exist.");
+	}
+	
+	private static void viewReplyEnquiry()
+	{
+		Integer sel = null;
+		String input = null;
+		do {
+			System.out.println("Enter '0' to view enquiries. Enter '1' to respond to an enquiry. Enter 'C' to cancel");
+			input = sc.nextLine();
+			if (input.strip().equals("C"))
+				return;
+			if (input.matches("[0-9]+")) { // If the input is an integer, proceed with the code
+				sel = Integer.parseInt(input);
+			} else { // If the input is not an integer, prompt the user to enter again
+				System.out.println("Invalid input. Please enter an integer.\n");
+			}
+		} while (sel == null);
+		
+		ArrayList<Request> req = requestCCMService.getRequestsAsCCM();
+		for(int i=0; i<req.size(); i++)
+		{
+			System.out.print("Index: " + i);
+			RequestView.printReq(req.get(i));
+		}
+		
+		if(sel == 0)
+		{
+			if(req.size() == 0) System.out.println("There are no enquiries on the camp you are committee of.");
+			return;
+		}
+		else if(sel == 1)
+		{
+			sel = null;
+			do {
+				System.out.println("Enter the index of enquiry to respond to. Enter 'C' to cancel");
+				input = sc.nextLine();
+				if (input.strip().equals("C"))
+					return;
+				if (input.matches("[0-9]+")) { // If the input is an integer, proceed with the code
+					sel = Integer.parseInt(input);
+				} else { // If the input is not an integer, prompt the user to enter again
+					System.out.println("Invalid input. Please enter an integer.\n");
+				}
+			} while (sel == null);
+			
+			if(sel >= 0 && sel < req.size())
+			{
+			
+				if(!requestCCMService.isPendingResponseRequest(req.get(sel)))
+				{
+					System.out.println("Error. The enquiry is already responded to.");
+					return;
+				}
+				input = "";
+				do {
+					System.out.println("Enter the response. Enter 'C' to cancel");
+					input = sc.nextLine();
+					if (input.strip().equals("C"))
+						return;
+				} while (input == null);
+				if(requestCCMService.respondToRequest(req.get(sel), input)) System.out.println("Response successful");
+				else System.out.println("Unknown error");
+			} 
+			else System.out.println("Invalid index. ");
+			
+		}
 	}
 }

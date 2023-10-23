@@ -6,7 +6,7 @@ import models.Request;
 
 public class RequestView {
 	private RequestView() {};
-	public static void printCamp(Request req) {
+	public static void printReq(Request req) {
 		System.out.println("--------------------------------------");
 		System.out.println("Requester: " + req.getRequesterID());
 		System.out.println("Status: " + req.getStatus());

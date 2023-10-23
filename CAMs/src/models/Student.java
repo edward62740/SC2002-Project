@@ -14,13 +14,14 @@ public class Student extends User{
     private ArrayList<Integer> camps;
     private ArrayList<Integer> prevCamps;
     private Integer committee;
+    private int points;
 
     public Student(String id, UserGroup fac) {
     	super(id, fac, UserRole.STUDENT);
         camps = new ArrayList<Integer>();
         prevCamps = new ArrayList<Integer>();
         committee = null;
-     
+        setPoints(0);
     }
 
     public ArrayList<Integer> getCamps() {
@@ -51,5 +52,16 @@ public class Student extends User{
 
 	public void setCommittee(Integer committee) {
 		this.committee = committee;
+	}
+
+	public int getPoints() {
+		if(this.getRole() != UserRole.CCM) return 0;
+		return points;
+	}
+
+	public boolean setPoints(int points) {
+		if(this.getRole() != UserRole.CCM) return false;
+		this.points = points;
+		return true;
 	}
 }
