@@ -3,11 +3,22 @@ import enums.UserGroup;
 import enums.UserRole;
 
 public class User {
+	
+	/* User id xxxx in email xxxx@ntu.edu.sg */
 	private String userID;
+	
+	/* Password string, defaults to "Password" */
 	private String password;
+	
+	/* Faculty defined by enum UserGroup */
 	private UserGroup faculty;
+	
+	/* Boolean to indicate whether password is default */
 	private boolean isDefaultPassword;
+	
+	/* Role defined by enum UserRole */
 	private UserRole role;
+	
 	public User(String uid, UserGroup faculty, UserRole role) {
 		this.userID = uid;
 		this.faculty = faculty;

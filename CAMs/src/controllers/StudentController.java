@@ -5,27 +5,31 @@ import java.util.Scanner;
 
 import services.AuthStudentService;
 import services.CampStudentService;
-import services.RequestStudentService;
+import services.EnquiryRequestService;
 import stores.AuthStore;
 import views.CampView;
 import views.RequestView;
 import enums.UserGroup;
 import models.Camp;
+import models.EnquiryRequest;
 import models.Request;
 
 public class StudentController extends UserController {
 
 	private static CampStudentService campStudentService = new CampStudentService();
-	private static RequestStudentService requestStudentService = new RequestStudentService();
+	private static EnquiryRequestService enquiryService = new EnquiryRequestService();
+
+	private static final int INPUT_MAX_ATTEMPTS = 1;
 
 	public static boolean run() {
-		int c = 0;
+		Integer c = 0;
 
-		while (true) {
+		do {
 			System.out.println(" --- STUDENT MENU --- ");
 			if (AuthStore.getCurUser().isDefaultPassword())
 				System.out.println("Warning! You are using the default password. ");
 			System.out.println("Select option:");
+			System.out.println("0. Exit");
 			System.out.println("1. View open camps");
 			System.out.println("2. View registered camps");
 			System.out.println("3. Register for camp (as participant)");
@@ -34,26 +38,14 @@ public class StudentController extends UserController {
 			System.out.println("6. Change password");
 			System.out.println("7. Submit enquiry");
 			System.out.println("8. View enquiry");
-			System.out.println("9. Exit");
+			System.out.println("9. Edit/delete enquiry");
 			System.out.println(" -------------------- ");
-			String input = sc.nextLine();
 
-			if (input.matches("[0-9]+")) { // If the input is an integer, proceed with the code
-				c = Integer.parseInt(input);
-
-				if (c < 0 || c > 9) {
-					System.out.println("Invalid input.!");
-				} else {
-					break;
-				}
-			} else { // If the input is not an integer, prompt the user to enter again
-				System.out.println("Invalid input. Please enter an integer.\n");
-			}
-
-		}
+			c = utils.InputParser.parseInInteger(sc, "", 0, 9, INPUT_MAX_ATTEMPTS, "C");
+		} while (c == null);
 
 		switch (c) {
-		case 9:
+		case 0:
 			System.out.println("Shutting down CAMs...");
 			return true;
 		case 1:
@@ -80,15 +72,17 @@ public class StudentController extends UserController {
 		case 8:
 			viewEnquiry();
 			break;
+		case 9:
+			editDeleteEnquiry();
+			break;
 		}
 		return false;
+
 	}
 
 	private static void viewOpenCamps() {
 		String input = "";
 		UserGroup userGroup = null;
-		boolean invisible = false;
-		boolean boolOk = true;
 		do {
 			System.out.println("Filter by faculty. Enter 'ALL' for all. Available options: ");
 			for (UserGroup u : UserGroup.values())
@@ -101,12 +95,6 @@ public class StudentController extends UserController {
 			if (userGroup == null)
 				System.out.println("Invalid user group. ");
 		} while (userGroup == null);
-		/*
-		 * do { System.out.println("Show invisible? (Y/N)"); input =
-		 * sc.nextLine().strip(); if(input.equals("Y")) invisible = true; else
-		 * if(input.equals("N")) invisible = false; else boolOk = false; } while
-		 * (!boolOk);
-		 */
 
 		ArrayList<Camp> camps = campStudentService.getCamps(userGroup, false);
 		for (Camp i : camps) {
@@ -121,6 +109,7 @@ public class StudentController extends UserController {
 		for (Camp i : camps) {
 			CampView.printCamp(i);
 			CampView.printPosition(i, AuthStore.getCurUser());
+
 		}
 
 		if (camps.size() == 0)
@@ -129,24 +118,33 @@ public class StudentController extends UserController {
 
 	private static void registerForCamp() {
 		Integer id = null;
-		String input = "";
 		do {
-			System.out.println("Enter the camp ID to register for. Enter 'C' to cancel");
-			input = sc.nextLine();
-			if (input.strip().equals("C"))
-				return;
-			if (input.matches("[0-9]+")) { // If the input is an integer, proceed with the code
-				id = Integer.parseInt(input);
-			} else { // If the input is not an integer, prompt the user to enter again
-				System.out.println("Invalid input. Please enter an integer.\n");
-			}
+			id = utils.InputParser.parseInInteger(sc, "Enter the camp ID to register for. Enter 'C' to cancel. ", 0,
+					Integer.MAX_VALUE, INPUT_MAX_ATTEMPTS, "C");
 		} while (id == null);
+
+		if (!campStudentService.existCamp(id)) {
+			System.out.println("Camp does not exist.");
+			return;
+		}
+		if (!campStudentService.isCampDateBeforeDeadline(id)) {
+			System.out.println("Past deadline. Cannot register.");
+			return;
+		}
+		if (!campStudentService.isCampNotClashWithExisting(id)) {
+			System.out.println("Clashes with other camps. Cannot register.");
+			return;
+		}
 		if (campStudentService.isPreviouslyRegistered(id)) {
 			System.out.println("You previously deregistered from this camp. Not allowed to re-register.");
 			return;
 		}
 		if (campStudentService.isAlreadyRegistered(id)) {
 			System.out.println("You are already registered. Not allowed to re-register.");
+			return;
+		}
+		if (!campStudentService.existVacancyMember(id)) {
+			System.out.println("There are no more vacancies for normal members.");
 			return;
 		}
 		if (campStudentService.registerForCamp(id))
@@ -157,24 +155,37 @@ public class StudentController extends UserController {
 
 	private static void registerForCommittee() {
 		Integer id = null;
-		String input = "";
 		do {
-			System.out.println("Enter the camp ID to register as committee for. Enter 'C' to cancel");
-			input = sc.nextLine();
-			if (input.strip().equals("C"))
-				return;
-			if (input.matches("[0-9]+")) { // If the input is an integer, proceed with the code
-				id = Integer.parseInt(input);
-			} else { // If the input is not an integer, prompt the user to enter again
-				System.out.println("Invalid input. Please enter an integer.\n");
-			}
+			id = utils.InputParser.parseInInteger(sc,
+					"Enter the camp ID to register as committee for. Enter 'C' to cancel. ", 0, Integer.MAX_VALUE,
+					INPUT_MAX_ATTEMPTS, "C");
+
 		} while (id == null);
+
+		if (!campStudentService.existCamp(id)) {
+			System.out.println("Camp does not exist.");
+			return;
+		}
+
+		if (!campStudentService.isCampDateBeforeDeadline(id)) {
+			System.out.println("Past deadline. Cannot register.");
+			return;
+		}
+
+		if (!campStudentService.isCampNotClashWithExisting(id)) {
+			System.out.println("Clashes with other camps. Cannot register.");
+			return;
+		}
 		if (campStudentService.isPreviouslyRegistered(id)) {
 			System.out.println("You previously deregistered from this camp. Not allowed to re-register.");
 			return;
 		}
 		if (campStudentService.isAlreadyCCM(id)) {
 			System.out.println("You are already CCM for another camp.");
+			return;
+		}
+		if (!campStudentService.existVacancyCCM(id)) {
+			System.out.println("There are no more vacancies for committee members.");
 			return;
 		}
 		if (campStudentService.registerForCCM(id))
@@ -185,18 +196,17 @@ public class StudentController extends UserController {
 
 	private static void deregisterCamp() {
 		Integer id = null;
-		String input = "";
 		do {
-			System.out.println("Enter the camp ID to deregister from. Enter 'C' to cancel");
-			input = sc.nextLine();
-			if (input.strip().equals("C"))
-				return;
-			if (input.matches("[0-9]+")) { // If the input is an integer, proceed with the code
-				id = Integer.parseInt(input);
-			} else { // If the input is not an integer, prompt the user to enter again
-				System.out.println("Invalid input. Please enter an integer.\n");
-			}
+			id = utils.InputParser.parseInInteger(sc,
+					"Enter the camp ID to deregister from. Enter 'C' to cancel. ", 0, Integer.MAX_VALUE,
+					INPUT_MAX_ATTEMPTS, "C");
 		} while (id == null);
+
+		if (!campStudentService.existCamp(id)) {
+			System.out.println("Camp does not exist.");
+			return;
+		}
+
 		if (campStudentService.isPreviouslyRegistered(id)) {
 			System.out.println("You previously deregistered from this camp. Not allowed to re-register.");
 			return;
@@ -212,51 +222,87 @@ public class StudentController extends UserController {
 		} else
 			System.out.println("You are not registered to this camp or does not exist.");
 	}
-	
-	private static void submitEnquiry()
-	{
+
+	private static void submitEnquiry() {
 		String input = null;
 		Integer id = null;
 		do {
-			System.out.println("Enter the camp ID to enquire on. Enter 'C' to cancel");
-			input = sc.nextLine();
-			if (input.strip().equals("C"))
-				return;
-			if (input.matches("[0-9]+")) { // If the input is an integer, proceed with the code
-				id = Integer.parseInt(input);
-			} else { // If the input is not an integer, prompt the user to enter again
-				System.out.println("Invalid input. Please enter an integer.\n");
-			}
+			id = utils.InputParser.parseInInteger(sc,
+					"Enter the camp ID to enquire on. Enter 'C' to cancel. ", 0, Integer.MAX_VALUE,
+					INPUT_MAX_ATTEMPTS, "C");
 		} while (id == null);
-		if(!campStudentService.existCamp(id)) 
-		{
+		if (!campStudentService.existCamp(id)) {
 			System.out.println("Camp does not exist.");
 			return;
 		}
 		input = "";
 		do {
-			System.out.println("Enter the enquiry. Enter 'C' to cancel");
-			input = sc.nextLine();
-			if (input.strip().equals("C"))
-				return;
+			input = utils.InputParser.parseInString(sc,
+					"Enter the enquiry. Enter 'C' to cancel. ", 
+					INPUT_MAX_ATTEMPTS, "C");
 		} while (input == null);
-		if(requestStudentService.isQueuedEnquiryForUser(id)) 
-		{
+		if (enquiryService.isQueuedRequestForUser(id)) {
 			System.out.println("You already have a pending enquiry!");
 			return;
 		}
-		requestStudentService.createNewRequest(input.strip(), id);
+		enquiryService.createNewRequest(input.strip(), id);
 		System.out.println("Operation successful.");
 	}
-	
-	private static void viewEnquiry()
-	{
-		ArrayList<Request> req = requestStudentService.getRequestsByUser(AuthStore.getCurUser().getUserID());
-		for(Request r : req)
-		{
+
+	private static void viewEnquiry() {
+		ArrayList<EnquiryRequest> req = enquiryService.getRequestByUser(AuthStore.getCurUser().getUserID());
+		for (Request r : req) {
 			RequestView.printReq(r);
 		}
-		if(req.size() == 0) System.out.println("You did not submit any enquiries. ");
-		
+		if (req.size() == 0)
+			System.out.println("You did not submit any enquiries. ");
+
+	}
+
+	private static void editDeleteEnquiry() {
+		String input = null;
+		Integer id = null;
+		Integer sel = null;
+		do {
+			sel = utils.InputParser.parseInInteger(sc,
+					"Enter '0' to edit enquiries. Enter '1' to delete. Enter 'C' to cancel. ", 0, 1,
+					INPUT_MAX_ATTEMPTS, "C");
+		} while (sel == null);
+		do {
+			id = utils.InputParser.parseInInteger(sc,
+					"Enter the camp ID of the request. Enter 'C' to cancel. ", 0, Integer.MAX_VALUE,
+					INPUT_MAX_ATTEMPTS, "C");
+		} while (id == null);
+		if(sel == 0) //edit
+		{
+			String content;
+			
+			if (!campStudentService.existCamp(id)) {
+				System.out.println("Camp does not exist.");
+				return;
+			}
+			
+			do {
+				content = utils.InputParser.parseInString(sc,
+						"Enter the new enquiry. Enter 'C' to cancel. ", 
+						INPUT_MAX_ATTEMPTS, "C");
+			} while (content == null);
+			if (enquiryService.editRequest(id, content))
+				System.out.println("Enquiry  successfully modified.");
+			else
+				System.out.println("No such enquiry or cannot modify.");
+		}
+		else //delete
+		{
+			if (!campStudentService.existCamp(id)) {
+				System.out.println("Camp does not exist.");
+				return;
+			}
+			if (enquiryService.deleteRequest(id))
+				System.out.println("Enquiry successfully deleted.");
+			else
+				System.out.println("No such enquiry or cannot delete.");
+		}
+
 	}
 }

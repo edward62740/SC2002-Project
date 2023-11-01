@@ -20,8 +20,9 @@ import stores.DataStore;
  */
 public class CampStudentService {
 	
-	utils.RangeChecker<LocalDateTime> dateChecker = new utils.RangeChecker<>();
+	utils.RangeChecker<LocalDateTime> dateChecker = new utils.RangeChecker<LocalDateTime>(LocalDateTime::compareTo);
 
+	/* wrapper for null check. extra calls are trivial since there is constant lookup time for hashmap */
 	public boolean existCamp(Integer id)
 	{
 		HashMap<Integer, Camp> camps = DataStore.getCamps();
@@ -63,7 +64,7 @@ public class CampStudentService {
 		if (existCamp(id)) {
 			Student s = (Student) AuthStore.getCurUser();
 			// add camp id to student entity AND add student username to camp entity
-			s.getCamps().add(id);
+			if(!s.getCamps().contains(id)) s.getCamps().add(id);
 			DataStore.getCamps().get(id).getRegisteredStudents().add(s.getUserID());
 			return true;
 		} else
@@ -81,8 +82,8 @@ public class CampStudentService {
 			s.setCommittee(id);
 			s.setRole(UserRole.CCM);
 			
-			// add camp id to student entity if not already present
-			s.getCamps().add(id);
+			// remove camp id to student entity if  already present
+			if(!s.getCamps().contains(id)) s.getCamps().add(id);
 			// remove student username if already registered as normal member
 			camp.getRegisteredStudents().remove(s);
 			
@@ -116,7 +117,6 @@ public class CampStudentService {
 		
 	}
 	
-
 	
 	public boolean isPreviouslyRegistered(Integer id)
 	{
@@ -142,7 +142,7 @@ public class CampStudentService {
 		// UNDO add camp id to student entity AND add student username to camp entity
 		HashMap<Integer, Camp> camps = DataStore.getCamps();
 		Camp camp = camps.get(id);
-		if(camp != null)
+		if(existCamp(id))
 		{
 			Student s = (Student) AuthStore.getCurUser();
 			camp.getRegisteredStudents().remove(s.getUserID());
@@ -152,5 +152,43 @@ public class CampStudentService {
 			}
 		}
 		return false;
+	}
+	
+	/* cubic time complexity since this finds the intersection between 2d arrays (dates) of all camps .. */
+	public boolean isCampNotClashWithExisting(Integer id)
+	{
+		HashMap<Integer, Camp> camps = DataStore.getCamps();
+		Camp camp = camps.get(id);
+		if(existCamp(id))
+		{
+			Student s = (Student) AuthStore.getCurUser();
+			for(Integer c : s.getCamps())
+			{
+				if(c == null) continue;
+				if(c == id) continue; // dont check if it already exists here
+				if(dateChecker.isIntersect(camp.getDates(), camps.get(c).getDates())) return false;
+			}
+		}
+		return true;
+	}
+	
+	
+	
+	public boolean isCampDateBeforeDeadline(Integer id)
+	{
+		HashMap<Integer, Camp> camps = DataStore.getCamps();
+		Camp camp = camps.get(id);
+		if(existCamp(id))
+		{
+			// return true if no closing date or currently before closing date
+			if(camp.getClosingDate() == null) return true;
+			if(LocalDateTime.now().isBefore(camp.getClosingDate())) return true;
+		}
+		return false;
+	}
+	
+	public void removeNullCampReference()
+	{
+		
 	}
 }

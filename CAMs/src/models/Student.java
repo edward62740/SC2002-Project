@@ -11,9 +11,18 @@ import enums.UserRole;
  * 
  */
 public class Student extends User{
+	
+	/* Integer array of camp ids that this user is registered to */
     private ArrayList<Integer> camps;
+    
+    /* Integer array of camp ids that this user was registered to. camps AND prevCamps must be pairwise disjoint or 
+     * undefined behavior */
     private ArrayList<Integer> prevCamps;
+    
+    /* Integer of campid that this student is CCM of iff role == CCM. invalid otherwise. */
     private Integer committee;
+    
+    /* Points of student, valid iff role == CCM. invalid otherwise. */
     private int points;
 
     public Student(String id, UserGroup fac) {

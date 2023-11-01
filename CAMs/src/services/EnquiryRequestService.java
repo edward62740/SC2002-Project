@@ -1,21 +1,17 @@
 package services;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.AbstractMap.SimpleEntry;
 
 import enums.RequestStatus;
-import models.Camp;
 import models.EnquiryRequest;
 import models.Request;
 import models.Student;
-import models.SuggestionRequest;
 import stores.AuthStore;
 import stores.DataStore;
 
-public class RequestStudentService implements IRequestService{
-	
+public class EnquiryRequestService implements IRequestService {
 	public boolean createNewRequest(String content, Integer campId)
 	{
 		Student s = (Student) AuthStore.getCurUser();
@@ -98,6 +94,19 @@ public class RequestStudentService implements IRequestService{
         }
 
         return matchingRequests;
+	}
+	
+	public boolean handleRequest(Request req, String v) {
+		if(req != null)
+		{
+			req.setResponderID(AuthStore.getCurUser().getUserID());
+			req.setResponse(v);
+			req.setStatus(RequestStatus.REPLIED);
+			Student s = (Student) AuthStore.getCurUser();
+			s.setPoints(s.getPoints() + 1); // give one point for responding
+			return true;
+		}
+		return false;
 	}
 	
 	

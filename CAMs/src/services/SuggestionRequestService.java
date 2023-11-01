@@ -1,29 +1,25 @@
 package services;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.AbstractMap.SimpleEntry;
 
 import enums.RequestStatus;
-import models.Camp;
-import models.EnquiryRequest;
+import models.SuggestionRequest;
 import models.Request;
 import models.Student;
-import models.SuggestionRequest;
 import stores.AuthStore;
 import stores.DataStore;
 
-public class RequestStudentService implements IRequestService{
-	
+public class SuggestionRequestService implements IRequestService {
 	public boolean createNewRequest(String content, Integer campId)
 	{
 		Student s = (Student) AuthStore.getCurUser();
-		EnquiryRequest req = new EnquiryRequest(s.getUserID(), campId, content);
+		SuggestionRequest req = new SuggestionRequest(s.getUserID(), campId, content);
 		SimpleEntry<Integer, String> p = new SimpleEntry<Integer, String>(campId, s.getUserID());
 		if(DataStore.getCamps().containsKey(campId))
 		{
-			DataStore.getEnquiries().put(p, req);
+			DataStore.getSuggestions().put(p, req);
 			return true;
 		}
 		return false;
@@ -35,10 +31,10 @@ public class RequestStudentService implements IRequestService{
 		if(DataStore.getCamps().containsKey(campId))
 		{
 			SimpleEntry<Integer, String> p = new SimpleEntry<Integer, String>(campId, s.getUserID());
-			if(DataStore.getEnquiries().containsKey(p)) 
+			if(DataStore.getSuggestions().containsKey(p)) 
 			{
-				if(DataStore.getEnquiries().get(p).getStatus() != RequestStatus.PENDING) return false;
-				DataStore.getEnquiries().remove(p);
+				if(DataStore.getSuggestions().get(p).getStatus() != RequestStatus.PENDING) return false;
+				DataStore.getSuggestions().remove(p);
 				return true;
 			}
 		}
@@ -51,10 +47,10 @@ public class RequestStudentService implements IRequestService{
 		if(DataStore.getCamps().containsKey(campId))
 		{
 			SimpleEntry<Integer, String> p = new SimpleEntry<Integer, String>(campId, s.getUserID());
-			if(DataStore.getEnquiries().containsKey(p)) 
+			if(DataStore.getSuggestions().containsKey(p)) 
 			{
-				if(DataStore.getEnquiries().get(p).getStatus() != RequestStatus.PENDING) return false;
-				DataStore.getEnquiries().get(p).setContent(content);
+				if(DataStore.getSuggestions().get(p).getStatus() != RequestStatus.PENDING) return false;
+				DataStore.getSuggestions().get(p).setContent(content);
 				return true;
 			}
 		}
@@ -67,15 +63,15 @@ public class RequestStudentService implements IRequestService{
 		if(DataStore.getCamps().containsKey(campId))
 		{
 			SimpleEntry<Integer, String> p = new SimpleEntry<Integer, String>(campId, s.getUserID());
-			if(DataStore.getEnquiries().containsKey(p)) return true;
+			if(DataStore.getSuggestions().containsKey(p)) return true;
 		}
 		return false;
 	}
 	
-	public ArrayList<EnquiryRequest> getRequestByCamp(Integer campId)
+	public ArrayList<SuggestionRequest> getRequestByCamp(Integer campId)
 	{
-		HashMap<SimpleEntry<Integer,String>, EnquiryRequest> requests = DataStore.getEnquiries();
-        ArrayList<EnquiryRequest> matchingRequests = new ArrayList<>();
+		HashMap<SimpleEntry<Integer,String>, SuggestionRequest> requests = DataStore.getSuggestions();
+        ArrayList<SuggestionRequest> matchingRequests = new ArrayList<>();
 
         for (SimpleEntry<Integer, String> key : requests.keySet()) {
             if (key.getKey().equals(campId)) {
@@ -86,10 +82,10 @@ public class RequestStudentService implements IRequestService{
         return matchingRequests;
 	}
 	
-	public ArrayList<EnquiryRequest> getRequestByUser(String uId)
+	public ArrayList<SuggestionRequest> getRequestByUser(String uId)
 	{
-		HashMap<SimpleEntry<Integer,String>, EnquiryRequest> requests = DataStore.getEnquiries();
-        ArrayList<EnquiryRequest> matchingRequests = new ArrayList<>();
+		HashMap<SimpleEntry<Integer,String>, SuggestionRequest> requests = DataStore.getSuggestions();
+        ArrayList<SuggestionRequest> matchingRequests = new ArrayList<>();
 
         for (SimpleEntry<Integer, String> key : requests.keySet()) {
             if (key.getValue().equals(uId)) {
@@ -99,6 +95,22 @@ public class RequestStudentService implements IRequestService{
 
         return matchingRequests;
 	}
-	
+
+
+	public boolean handleRequest(Request req, boolean v) {
+		if(req != null)
+		{
+			req.setResponderID(AuthStore.getCurUser().getUserID());
+			if(v)
+				req.setStatus(RequestStatus.ACCEPTED);
+			else 
+				req.setStatus(RequestStatus.REJECTED);
+			Student s = (Student) AuthStore.getCurUser();
+			s.setPoints(s.getPoints() + 1); // give one point for responding
+			return true;
+		}
+		return false;
+	}
+
 	
 }
