@@ -1,5 +1,8 @@
 package services;
 
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +19,8 @@ import stores.DataStore;
  * contains reference to wrong type or null while controller is running.
  */
 public class CampStudentService {
+	
+	utils.RangeChecker<LocalDateTime> dateChecker = new utils.RangeChecker<>();
 
 	public boolean existCamp(Integer id)
 	{
@@ -57,7 +62,9 @@ public class CampStudentService {
 	public boolean registerForCamp(Integer id) {
 		if (existCamp(id)) {
 			Student s = (Student) AuthStore.getCurUser();
+			// add camp id to student entity AND add student username to camp entity
 			s.getCamps().add(id);
+			DataStore.getCamps().get(id).getRegisteredStudents().add(s.getUserID());
 			return true;
 		} else
 			return false;
@@ -70,9 +77,16 @@ public class CampStudentService {
 		Camp camp = camps.get(id);
 		if (existCamp(id)) {
 			Student s = (Student) AuthStore.getCurUser();
+			// "promote" student entity to CCM
 			s.setCommittee(id);
 			s.setRole(UserRole.CCM);
+			
+			// add camp id to student entity if not already present
 			s.getCamps().add(id);
+			// remove student username if already registered as normal member
+			camp.getRegisteredStudents().remove(s);
+			
+			// add student username to committee
 			camp.getCommittee().add(s.getUserID());
 			return true;
 		}
@@ -109,6 +123,7 @@ public class CampStudentService {
 		if((((Student)AuthStore.getCurUser()).getPrevCamps().contains(id))) return true;
 		else return false;
 	}
+	
 	public boolean isAlreadyRegistered(Integer id)
 	{
 		if((((Student)AuthStore.getCurUser()).getCamps().contains(id))) return true;
@@ -124,11 +139,13 @@ public class CampStudentService {
 	
 	public boolean deregisterFromCamp(Integer id)
 	{
+		// UNDO add camp id to student entity AND add student username to camp entity
 		HashMap<Integer, Camp> camps = DataStore.getCamps();
 		Camp camp = camps.get(id);
 		if(camp != null)
 		{
 			Student s = (Student) AuthStore.getCurUser();
+			camp.getRegisteredStudents().remove(s.getUserID());
 			if((s.getCamps().contains(id)))
 			{
 				return s.removeCamps(id);

@@ -21,6 +21,8 @@ public class Camp  {
 	private int totalSlots;
 	private int ccmSlots;
 	private String staff;
+	
+	// Note that all items in committee and registeredStudents must be pairwise disjoint
 	private ArrayList<String> committee;
 	private ArrayList<String> registeredStudents;
 	private String description;

@@ -15,6 +15,7 @@ import views.MenuView;
 
 public class MainApp {
 	public static void main(String args[]) {
+		System.out.println(System.getProperty("java.runtime.version"));
 		Student s = new Student("etan102", UserGroup.SCSE);
 		Student s1 = new Student("testuser", UserGroup.SCSE);
 		s1.setRole(UserRole.CCM);
