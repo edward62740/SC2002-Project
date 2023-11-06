@@ -5,16 +5,18 @@ import java.util.HashMap;
 import java.util.AbstractMap.SimpleEntry;
 
 import enums.RequestStatus;
+import enums.UserRole;
 import models.EnquiryRequest;
 import models.Request;
 import models.Student;
+import models.User;
 import stores.AuthStore;
 import stores.DataStore;
 
 public class EnquiryRequestService implements IRequestService {
 	public boolean createNewRequest(String content, Integer campId)
 	{
-		Student s = (Student) AuthStore.getCurUser();
+		User s = AuthStore.getCurUser();
 		EnquiryRequest req = new EnquiryRequest(s.getUserID(), campId, content);
 		SimpleEntry<Integer, String> p = new SimpleEntry<Integer, String>(campId, s.getUserID());
 		if(DataStore.getCamps().containsKey(campId))
@@ -27,7 +29,7 @@ public class EnquiryRequestService implements IRequestService {
 	
 	public boolean deleteRequest(Integer campId)
 	{
-		Student s = (Student) AuthStore.getCurUser();
+		User s = AuthStore.getCurUser();
 		if(DataStore.getCamps().containsKey(campId))
 		{
 			SimpleEntry<Integer, String> p = new SimpleEntry<Integer, String>(campId, s.getUserID());
@@ -43,7 +45,7 @@ public class EnquiryRequestService implements IRequestService {
 	
 	public boolean editRequest(Integer campId, String content)
 	{
-		Student s = (Student) AuthStore.getCurUser();
+		User s = AuthStore.getCurUser();
 		if(DataStore.getCamps().containsKey(campId))
 		{
 			SimpleEntry<Integer, String> p = new SimpleEntry<Integer, String>(campId, s.getUserID());
@@ -59,7 +61,7 @@ public class EnquiryRequestService implements IRequestService {
 	
 	public boolean isQueuedRequestForUser(Integer campId)
 	{
-		Student s = (Student) AuthStore.getCurUser();
+		User s = AuthStore.getCurUser();
 		if(DataStore.getCamps().containsKey(campId))
 		{
 			SimpleEntry<Integer, String> p = new SimpleEntry<Integer, String>(campId, s.getUserID());
@@ -102,9 +104,12 @@ public class EnquiryRequestService implements IRequestService {
 			req.setResponderID(AuthStore.getCurUser().getUserID());
 			req.setResponse(v);
 			req.setStatus(RequestStatus.REPLIED);
-			Student s = (Student) AuthStore.getCurUser();
-			s.setPoints(s.getPoints() + 1); // give one point for responding
-			return true;
+			if(AuthStore.getCurUser().getRole() == UserRole.CCM)
+			{
+				Student s = (Student) AuthStore.getCurUser();
+				s.setPoints(s.getPoints() + 1); // give one point for responding
+				return true;
+			}
 		}
 		return false;
 	}

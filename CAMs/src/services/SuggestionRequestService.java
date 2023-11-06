@@ -6,6 +6,7 @@ import java.util.AbstractMap.SimpleEntry;
 
 import enums.RequestStatus;
 import models.SuggestionRequest;
+import models.User;
 import models.Request;
 import models.Student;
 import stores.AuthStore;
@@ -14,7 +15,7 @@ import stores.DataStore;
 public class SuggestionRequestService implements IRequestService {
 	public boolean createNewRequest(String content, Integer campId)
 	{
-		Student s = (Student) AuthStore.getCurUser();
+		User s = AuthStore.getCurUser();
 		SuggestionRequest req = new SuggestionRequest(s.getUserID(), campId, content);
 		SimpleEntry<Integer, String> p = new SimpleEntry<Integer, String>(campId, s.getUserID());
 		if(DataStore.getCamps().containsKey(campId))
@@ -27,7 +28,7 @@ public class SuggestionRequestService implements IRequestService {
 	
 	public boolean deleteRequest(Integer campId)
 	{
-		Student s = (Student) AuthStore.getCurUser();
+		User s = AuthStore.getCurUser();
 		if(DataStore.getCamps().containsKey(campId))
 		{
 			SimpleEntry<Integer, String> p = new SimpleEntry<Integer, String>(campId, s.getUserID());
@@ -43,7 +44,7 @@ public class SuggestionRequestService implements IRequestService {
 	
 	public boolean editRequest(Integer campId, String content)
 	{
-		Student s = (Student) AuthStore.getCurUser();
+		User s = AuthStore.getCurUser();
 		if(DataStore.getCamps().containsKey(campId))
 		{
 			SimpleEntry<Integer, String> p = new SimpleEntry<Integer, String>(campId, s.getUserID());
@@ -59,7 +60,7 @@ public class SuggestionRequestService implements IRequestService {
 	
 	public boolean isQueuedRequestForUser(Integer campId)
 	{
-		Student s = (Student) AuthStore.getCurUser();
+		User s = AuthStore.getCurUser();
 		if(DataStore.getCamps().containsKey(campId))
 		{
 			SimpleEntry<Integer, String> p = new SimpleEntry<Integer, String>(campId, s.getUserID());
@@ -105,8 +106,7 @@ public class SuggestionRequestService implements IRequestService {
 				req.setStatus(RequestStatus.ACCEPTED);
 			else 
 				req.setStatus(RequestStatus.REJECTED);
-			Student s = (Student) AuthStore.getCurUser();
-			s.setPoints(s.getPoints() + 1); // give one point for responding
+
 			return true;
 		}
 		return false;
