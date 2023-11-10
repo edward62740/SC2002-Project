@@ -1,5 +1,9 @@
 package services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+
 import enums.UserGroup;
 import models.Camp;
 import models.String;
@@ -10,9 +14,14 @@ import stores.DataStore;
 
 public class CampStaffService {
 	
-	public void createACamp(int campId, String name, UserGroup userGroup, String location, int totalSlots, int ccmSlots, String staff, String description) {
-		Camp newcamp = new Camp(int campId, String name, UserGroup userGroup, String location, int totalSlots, int ccmSlots, String staff, String description);
-		Staff.addOwnedCamp(campId);
+	public boolean createACamp(String name, UserGroup userGroup, String location, Integer totalSlots, Integer ccmSlots, String staff, String description) {
+		
+		Integer campId = DataStore.getCampIndexCur();
+		Camp newcamp = new Camp(campId, name, userGroup, location, totalSlots, ccmSlots, staff, description);
+		((Staff)AuthStore.getCurUser()).addOwnedCamps(campId);
+		
+		DataStore.getCamps().put(campId, newcamp);
+		return true;
 	}
 	// HELP/////////////////////////////
 	public void editACamp() {
@@ -20,20 +29,18 @@ public class CampStaffService {
 	}
 	
 	// HELP////////////////////////////
-	public void deleteACamp(Integer id) {
+	public boolean deleteACamp(Integer id) {
 		// UNDO add camp id to student entity AND add student username to camp entity
 		HashMap<Integer, Camp> camps = DataStore.getCamps();
 		Camp camp = camps.get(id);
-		if(isCampOwned(id))
+		if(camp != null)
 		{
-			Staff st = (Staff) AuthStore.getCurUser();
+			if(!isCampOwned(id)) return false; // ensure that this never happens unless valid owner
 			// (HELP) Need help to implement a for loop to iterate through the list of registered students to delete them
-			
-			camp.getRegisteredStudents().remove(s.getUserID());
-			if((s.getCamps().contains(id)))
-			{
-				return s.removeCamps(id);
-			}
+			// no need.. just delete from hashmap
+
+			camps.remove(id);
+			return true;
 		}
 		return false;
 	}
@@ -50,7 +57,7 @@ public class CampStaffService {
 	
 	public ArrayList<Camp> getOwnedCamps() {
 		Staff st = (Staff) AuthStore.getCurUser();
-		ArrayList<Integer> ref = st.CampsCreated();
+		ArrayList<Integer> ref = st.getOwnedCamps();
 		HashMap<Integer, Camp> camps = DataStore.getCamps();
 
 		ArrayList<Camp> ownedCamps = new ArrayList<Camp>();
@@ -66,8 +73,8 @@ public class CampStaffService {
 
 	}
 	
-	public boolean isCampOwned(integer id) {
-		if((((Staff)AuthStore.getCurUser()).CampsCreated().contains(id))) return true;
+	public boolean isCampOwned(Integer id) {
+		if((((Staff)AuthStore.getCurUser()).getOwnedCamps().contains(id))) return true;
 		else return false;
 	}
 	public void generateAReport() {

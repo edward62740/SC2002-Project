@@ -7,11 +7,13 @@ import java.util.HashMap;
 
 import controllers.AuthController;
 import controllers.CCMController;
+import controllers.StaffController;
 import controllers.StudentController;
 import enums.UserGroup;
 import enums.UserRole;
 import models.Camp;
 import models.Student;
+import models.Staff;
 import stores.AuthStore;
 import stores.DataStore;
 import views.MenuView;
@@ -23,8 +25,10 @@ public class MainApp {
 		System.out.println(System.getProperty("java.runtime.version"));
 		Student s = new Student("etan102", UserGroup.SCSE);
 		Student s1 = new Student("testuser", UserGroup.SCSE);
+		Staff st = new Staff("teststaff", UserGroup.SCSE);
 		s1.setRole(UserRole.STUDENT);
 		HashMap<String, Student> students = DataStore.getStudents();
+		HashMap<String, Staff> staff = DataStore.getStaff();
 		Camp camp = new Camp(0, "name", UserGroup.SCSE, "location info", 50, 0, "user", "this is a desc");
 		Camp camp1 = new Camp(1, "name1", UserGroup.ALL, "location info1", 1, 2, "user1", "this is a desc1");
 		camp.setClosingDate(LocalDateTime.now().plusHours(1));
@@ -42,6 +46,7 @@ public class MainApp {
 		DataStore.getCamps().put(1, camp1);
 		students.put(s.getUserID(), s);
 		students.put(s1.getUserID(), s1);
+		staff.put(st.getUserID(), st);
 		System.out.println(s.getFaculty());
 
 		MenuView.printSplashScreen();
@@ -64,7 +69,7 @@ public class MainApp {
 					exitSignal = CCMController.run();
 					break;
 				case STAFF:
-
+					exitSignal = StaffController.run();
 					break;
 				default:
 					break;

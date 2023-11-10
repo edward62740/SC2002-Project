@@ -6,6 +6,7 @@ import java.util.HashMap;
 import models.Camp;
 import models.EnquiryRequest;
 import models.Request;
+import models.Staff;
 import models.Student;
 import models.SuggestionRequest;
 /**
@@ -32,13 +33,14 @@ public class DataStore {
 	private static HashMap<String, Student> students = new HashMap<String, Student>();
 	
 	/* Store Staff with their user id as key */
-	private static HashMap<String, Student> staff = new HashMap<String, Student>();
+	private static HashMap<String, Staff> staff = new HashMap<String, Staff>();
 	
 	
 	/* Store Camps with their id as key */
 	private static HashMap<Integer, Camp> camps = new HashMap<Integer, Camp>();
+	private static Integer campIndexCur = -1;
 	
-	/* Store enquiries with keys <CampID, StudentID> */
+	/* Store enquires with keys <CampID, StudentID> */
 	private static HashMap<SimpleEntry<Integer,String>, EnquiryRequest> enquiries = new HashMap<SimpleEntry<Integer,String>, EnquiryRequest>();
 	
 	/* Store suggestions with keys <CampID, StudentID> */
@@ -61,10 +63,10 @@ public class DataStore {
 		DataStore.camps = camps;
 	}
 
-	public static HashMap<String, Student> getStaff() {
+	public static HashMap<String, Staff> getStaff() {
 		return staff;
 	}
-	public static void setStaff(HashMap<String, Student> staff) {
+	public static void setStaff(HashMap<String, Staff> staff) {
 		DataStore.staff = staff;
 	}
 	public static HashMap<SimpleEntry<Integer,String>, SuggestionRequest> getSuggestions() {
@@ -78,6 +80,10 @@ public class DataStore {
 	}
 	public static void setEnquiries(HashMap<SimpleEntry<Integer,String>, EnquiryRequest> enquiries) {
 		DataStore.enquiries = enquiries;
+	}
+	public static Integer getCampIndexCur() {
+		campIndexCur++;
+		return campIndexCur;
 	}
 	
 	

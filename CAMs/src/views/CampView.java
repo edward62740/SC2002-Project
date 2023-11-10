@@ -24,12 +24,16 @@ public class CampView {
 		System.out.println("Staff in-charge: " + camp.getStaff());
 		System.out.println("Remaining Member Slots: " + (camp.getTotalSlots() - camp.getRegisteredStudents().size() + " out of " + camp.getTotalSlots()));
 		System.out.println("Remaining Committee Slots: " + (camp.getCcmSlots() - camp.getCommittee().size() + " out of " + camp.getCcmSlots()));
-		System.out.println("Registration closing date: " + camp.getClosingDate().format(formatter));
+		if(camp.getClosingDate() != null)System.out.println("Registration closing date: " + camp.getClosingDate().format(formatter));
 		System.out.println("Camp dates: ");
-		for(SimpleEntry<LocalDateTime, LocalDateTime> d : camp.getDates())
+		if(camp.getDates() != null)
 		{
-			System.out.println(d.getKey().format(formatter) + " - " + d.getValue().format(formatter));
+			for(SimpleEntry<LocalDateTime, LocalDateTime> d : camp.getDates())
+			{
+				System.out.println(d.getKey().format(formatter) + " - " + d.getValue().format(formatter));
+			}
 		}
+		
 		if(user.getRole() == UserRole.STAFF || user.getRole() == UserRole.CCM)
 		{
 			System.out.println("List of committee members: ");

@@ -3,6 +3,7 @@ package controllers;
 import java.util.Scanner;
 
 import services.AuthService;
+import services.AuthStaffService;
 import services.AuthStudentService;
 import stores.AuthStore;
 
@@ -51,6 +52,7 @@ public class AuthController {
 				break;
 			case 2:
 				System.out.println("ERROR NOT IMPLEMENTED");
+				authService = new AuthStaffService();
 				break;
 			}
 
@@ -65,10 +67,10 @@ public class AuthController {
 			isOk = authService.login(userID, password);
 			if(!isOk && !userID.matches(pattern))
 			{
-				System.out.println("🚫 User ID should not contain email domain or non-ASCII characters. 🚫 \n");
+				System.out.println("\u001b[1;31m🚫 User ID should not contain email domain or non-ASCII characters. 🚫\u001b[0m \n");
 			}
 			else if (!isOk) {
-				System.out.println("🚫 Invalid credentials. Try again. 🚫 \n");
+				System.out.println("\u001b[1;31m🚫 Invalid credentials. Try again. 🚫\u001b[0m \n");
 			}
 		} while (!isOk);
 		System.out.println("Log in successful, " + AuthStore.getCurUser().getUserID() + "\n");

@@ -9,6 +9,7 @@ import services.EnquiryRequestService;
 import services.SuggestionRequestService;
 
 import stores.AuthStore;
+import utils.InputParser;
 import views.CampView;
 import views.RequestView;
 import enums.RequestStatus;
@@ -20,15 +21,18 @@ import models.Student;
 import models.Staff;
 import enums.UserGroup;
 
-public class StaffController extends UserController{
-	
+public class StaffController extends UserController {
+
+	private static final int INPUT_MAX_ATTEMPTS = 1;
 	private static EnquiryRequestService enquiryService = new EnquiryRequestService();
 	private static SuggestionRequestService suggestionService = new SuggestionRequestService();
-	
-	Scanner sc = new Scanner(System.in);
+
+	private static CampStaffService campStaffService = new CampStaffService();
+
+	static Scanner sc = new Scanner(System.in);
+
 	public static boolean run() {
 		Integer c = 0;
-
 
 		do {
 			System.out.println(" --- STAFF MENU --- ");
@@ -66,7 +70,7 @@ public class StaffController extends UserController{
 			break;
 		case 5:
 			viewReplySuggestions();
-			break;			
+			break;
 		case 6:
 			viewReplyEnquiry();
 			break;
@@ -78,58 +82,76 @@ public class StaffController extends UserController{
 		return false;
 
 	}
+
 	public static void createCamp() {
-		
 
-		System.out.println("Enter camp ID: ");
-		int c_id = sc.nextInt();
+		String c_name = null, c_location = null, c_staff = null, c_description = null;
+		Integer c_ccmSlot = null, c_totalSlots = null;
+		String input = null;
+		UserGroup c_userGroup = null;
+		do {
+			c_name = utils.InputParser.parseInString(sc, "Enter the camp name", 0, "C");
 
-		System.out.println("Enter camp name: ");
-		String c_name = sc.next();
-		
-		System.out.println("Enter user group: ");
-		UserGroup c_userGroup = sc.next();
-		
+		} while (c_name == null);
+
+		do {
+			System.out.println("Enter user group. Available options: ");
+			for (UserGroup u : UserGroup.values())
+				System.out.print(u + ", ");
+			input = sc.nextLine();
+			for (UserGroup u : UserGroup.values())
+				if (input.strip().equals(u.toString())) {
+					c_userGroup = u;
+				}
+			if (c_userGroup == null)
+				System.out.println("Invalid user group. ");
+		} while (c_userGroup == null);
+
 		System.out.println("Enter location: ");
-		String c_location = sc.next();
-		
-		System.out.println("Enter total slots: ");
-		int c_totalSlots = sc.nextInt();
-		
-		System.out.println("Enter CCM slots: ");
-		int c_ccmSlot = sc.next();
 
-		
-		String c_staff = AuthStore.getCurUser().getUserID(); //Is this how i get the staff name?
-		
-		System.out.println("Enter camp description: ");
-		String c_description = sc.next();
-		
-		CampStaffService.createACamp(c_id, c_name, c_userGroup, c_location, c_totalSlots, c_ccmSlot, c_staff, c_description);
+		do {
+			c_ccmSlot = utils.InputParser.parseInInteger(sc, "Set max committee", 0, Integer.MAX_VALUE,
+					INPUT_MAX_ATTEMPTS, "C");
 
-		
-		
+		} while (c_ccmSlot == null);
+
+		do {
+			c_totalSlots = utils.InputParser.parseInInteger(sc, "Set max slots", 0, Integer.MAX_VALUE,
+					INPUT_MAX_ATTEMPTS, "C");
+
+		} while (c_totalSlots == null);
+
+		c_staff = AuthStore.getCurUser().getUserID(); // Is this how i get the staff name?
+
+		do {
+			c_description = utils.InputParser.parseInString(sc, "Enter the camp name", 0, "C");
+
+		} while (c_description == null);
+
+		campStaffService.createACamp(c_name, c_userGroup, c_location, c_totalSlots, c_ccmSlot, c_staff, c_description);
+
 	}
-	
+
 	public static void editCamp() {
-		
+
 	}
+
 	public static void deleteCamp() {
 		Integer id = null;
 		do {
-			id = utils.InputParser.parseInInteger(sc,
-					"Enter the camp ID to delete. Enter 'C' to cancel. ", 0, Integer.MAX_VALUE,
-					INPUT_MAX_ATTEMPTS, "C");
+			id = utils.InputParser.parseInInteger(sc, "Enter the camp ID to delete. Enter 'C' to cancel. ", 0,
+					Integer.MAX_VALUE, INPUT_MAX_ATTEMPTS, "C");
 		} while (id == null);
 
 		if (!campStaffService.isCampOwned(id)) {
 			System.out.println("You do not own this camp");
 			return;
-		}
-		else
-			CampStaffService.deleteACamp(id);
+		} else if (campStaffService.deleteACamp(id))
 			System.out.println("Camp successfully deleted.");
+		else
+			System.out.println("Operation failed. ");
 	}
+
 	public static void viewOwnedCamps() {
 		ArrayList<Camp> camps = campStaffService.getOwnedCamps(userGroup, false);
 		for (Camp i : camps) {
@@ -137,9 +159,9 @@ public class StaffController extends UserController{
 		}
 		if (camps.size() == 0)
 			System.out.println("There are no available camps. Modify your search or try again later. ");
-		
+
 	}
-	
+
 	private static void viewReplySuggestions() {
 		Integer sel = null;
 		String input = null;
@@ -191,7 +213,6 @@ public class StaffController extends UserController{
 		}
 	}
 
-
 	private static void viewReplyEnquiry() {
 		Integer sel = null;
 		String input = null;
@@ -242,9 +263,9 @@ public class StaffController extends UserController{
 
 		}
 	}
-	
+
 	public static void generateReport() {
-		
+
 	}
 
 }

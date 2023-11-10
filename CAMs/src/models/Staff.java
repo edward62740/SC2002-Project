@@ -13,20 +13,14 @@ public class Staff extends User{
 	    ownedCamps = new ArrayList<Integer>();
     }
 	
-	public ArrayList<Integer> CampsCreated() {
+	public ArrayList<Integer> getOwnedCamps() {
 		return ownedCamps;
 	}
 	
-    public boolean addOwnedCamp(Integer k)
+    public boolean addOwnedCamps(Integer k)
     {
     	return ownedCamps.add(k);
     }
 
-    public boolean deleteOwnedCamps(Integer k) {
-        if (ownedCamps.contains(k)) {
-            ownedCamps.remove(k);
-            return true;
-        }
-        return false;
-    }
+
 }

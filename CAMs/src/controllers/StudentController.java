@@ -159,7 +159,7 @@ public class StudentController extends UserController {
 			id = utils.InputParser.parseInInteger(sc,
 					"Enter the camp ID to register as committee for. Enter 'C' to cancel. ", 0, Integer.MAX_VALUE,
 					INPUT_MAX_ATTEMPTS, "C");
-
+			
 		} while (id == null);
 
 		if (!campStudentService.existCamp(id)) {
