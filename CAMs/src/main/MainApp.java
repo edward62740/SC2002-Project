@@ -1,5 +1,6 @@
 package main;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
@@ -22,19 +23,19 @@ public class MainApp {
 		System.out.println(System.getProperty("java.runtime.version"));
 		Student s = new Student("etan102", UserGroup.SCSE);
 		Student s1 = new Student("testuser", UserGroup.SCSE);
-		s1.setRole(UserRole.CCM);
+		s1.setRole(UserRole.STUDENT);
 		HashMap<String, Student> students = DataStore.getStudents();
 		Camp camp = new Camp(0, "name", UserGroup.SCSE, "location info", 50, 0, "user", "this is a desc");
-		Camp camp1 = new Camp(1, "name1", UserGroup.ALL, "location info1", 0, 2, "user1", "this is a desc1");
+		Camp camp1 = new Camp(1, "name1", UserGroup.ALL, "location info1", 1, 2, "user1", "this is a desc1");
 		camp.setClosingDate(LocalDateTime.now().plusHours(1));
 		camp1.setClosingDate(LocalDateTime.now().plusHours(1));
-		
+
 		LocalDateTime start = LocalDateTime.now().plusHours(6);
 		LocalDateTime start1 = LocalDateTime.now().plusHours(11);
-        LocalDateTime end = LocalDateTime.now().plusHours(12);
+		LocalDateTime end = LocalDateTime.now().plusHours(12);
 
-        SimpleEntry<LocalDateTime, LocalDateTime> dateRange = new SimpleEntry<>(start, end);
-        SimpleEntry<LocalDateTime, LocalDateTime> dateRange1 = new SimpleEntry<>(start, end);
+		SimpleEntry<LocalDateTime, LocalDateTime> dateRange = new SimpleEntry<>(start, end);
+		SimpleEntry<LocalDateTime, LocalDateTime> dateRange1 = new SimpleEntry<>(start, end);
 		camp.getDates().add(dateRange);
 		camp1.getDates().add(dateRange1);
 		DataStore.getCamps().put(0, camp);
@@ -42,34 +43,41 @@ public class MainApp {
 		students.put(s.getUserID(), s);
 		students.put(s1.getUserID(), s1);
 		System.out.println(s.getFaculty());
-		
-		
-		
+
 		MenuView.printSplashScreen();
-		AuthController.login();
 
 		while (true) {
-			boolean exitSignal = false;
-			switch (AuthStore.getCurUser().getRole()) {
-			case STUDENT:
-				exitSignal = StudentController.run();
+			boolean logoutSignal = false;
+			logoutSignal = !AuthController.login();
+	
+			if (logoutSignal) {
+				System.out.println("Received SIGABRT. SHUTTING DOWN CAMs. ");
 				break;
-			case CCM:
-				exitSignal = CCMController.run();
-				break;
-			case STAFF:
+			}
+			while (true) {
+				boolean exitSignal = false;
+				switch (AuthStore.getCurUser().getRole()) {
+				case STUDENT:
+					exitSignal = StudentController.run();
+					break;
+				case CCM:
+					exitSignal = CCMController.run();
+					break;
+				case STAFF:
 
-				break;
-			default:
-				break;
+					break;
+				default:
+					break;
+				}
+				if (exitSignal) {
+					System.out.println("Received SIGINT. LOG OUT. ");
+					break;
+				}
 			}
-			if (exitSignal) {
-				System.out.println("Received SIGINT. EXITING. ");
-				break;
-			}
+
+			AuthController.logout();
+
 		}
 		System.out.println("Placeholder for save to CSV call");
-		AuthController.logout();
-
 	}
 }

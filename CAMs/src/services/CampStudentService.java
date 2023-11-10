@@ -85,7 +85,7 @@ public class CampStudentService {
 			// remove camp id to student entity if  already present
 			if(!s.getCamps().contains(id)) s.getCamps().add(id);
 			// remove student username if already registered as normal member
-			camp.getRegisteredStudents().remove(s);
+			camp.getRegisteredStudents().remove(s.getUserID());
 			
 			// add student username to committee
 			camp.getCommittee().add(s.getUserID());

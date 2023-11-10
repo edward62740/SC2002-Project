@@ -98,7 +98,7 @@ public class StudentController extends UserController {
 
 		ArrayList<Camp> camps = campStudentService.getCamps(userGroup, false);
 		for (Camp i : camps) {
-			CampView.printCamp(i);
+			CampView.printCamp(i, AuthStore.getCurUser());
 		}
 		if (camps.size() == 0)
 			System.out.println("There are no available camps. Modify your search or try again later. ");
@@ -107,7 +107,7 @@ public class StudentController extends UserController {
 	private static void viewRegisteredCamps() {
 		ArrayList<Camp> camps = campStudentService.getRegisteredCamps();
 		for (Camp i : camps) {
-			CampView.printCamp(i);
+			CampView.printCamp(i, AuthStore.getCurUser());
 			CampView.printPosition(i, AuthStore.getCurUser());
 
 		}

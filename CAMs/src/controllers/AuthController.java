@@ -12,7 +12,7 @@ public class AuthController {
 
 	private static AuthService authService;
 	public static final String pattern = "^[a-zA-Z0-9]+$";
-	public static void login() {
+	public static boolean login() {
 		Scanner sc = new Scanner(System.in);
 		boolean isOk = false;
 		int c = 0;
@@ -24,13 +24,14 @@ public class AuthController {
 				System.out.println("Select login domain:");
 				System.out.println("1. Student");
 				System.out.println("2. Staff ");
+				System.out.println("9. Exit ");
 
 				String input = sc.nextLine();
 
 				if (input.matches("[0-9]+")) { // If the input is an integer, proceed with the code
 					c = Integer.parseInt(input);
 
-					if (c < 1 || c > 2) {
+					if (c < 1 || (c > 2 && c!=9)) {
 						System.out.println("Invalid input.!");
 					} else {
 						break;
@@ -44,7 +45,7 @@ public class AuthController {
 			switch (c) {
 			case 9:
 				System.out.println("Shutting down CAMs...");
-				return;
+				return false;
 			case 1:
 				authService = new AuthStudentService();
 				break;
@@ -71,6 +72,7 @@ public class AuthController {
 			}
 		} while (!isOk);
 		System.out.println("Log in successful, " + AuthStore.getCurUser().getUserID() + "\n");
+		return true;
 		
 	}
 	public static void logout() {
