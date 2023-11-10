@@ -16,6 +16,7 @@ import enums.RequestStatus;
 import enums.UserGroup;
 import models.Camp;
 import models.EnquiryRequest;
+import models.SuggestionRequest;
 import models.Request;
 import models.Student;
 import models.Staff;
@@ -107,7 +108,8 @@ public class StaffController extends UserController {
 				System.out.println("Invalid user group. ");
 		} while (c_userGroup == null);
 
-		System.out.println("Enter location: ");
+		//System.out.println("Enter location: ");
+		c_location = utils.InputParser.parseInString(sc, "Enter location", 0, "C");
 
 		do {
 			c_ccmSlot = utils.InputParser.parseInInteger(sc, "Set max committee", 0, Integer.MAX_VALUE,
@@ -124,12 +126,12 @@ public class StaffController extends UserController {
 		c_staff = AuthStore.getCurUser().getUserID(); // Is this how i get the staff name?
 
 		do {
-			c_description = utils.InputParser.parseInString(sc, "Enter the camp name", 0, "C");
+			c_description = utils.InputParser.parseInString(sc, "Enter the camp description", 0, "C");
 
 		} while (c_description == null);
 
 		campStaffService.createACamp(c_name, c_userGroup, c_location, c_totalSlots, c_ccmSlot, c_staff, c_description);
-
+		System.out.println("Camp succesfully created!");
 	}
 
 	public static void editCamp() {
@@ -153,9 +155,9 @@ public class StaffController extends UserController {
 	}
 
 	public static void viewOwnedCamps() {
-		ArrayList<Camp> camps = campStaffService.getOwnedCamps(userGroup, false);
+		ArrayList<Camp> camps = campStaffService.getOwnedCamps();
 		for (Camp i : camps) {
-			CampView.printCamp(i);
+			CampView.printCamp(i, AuthStore.getCurUser());
 		}
 		if (camps.size() == 0)
 			System.out.println("There are no available camps. Modify your search or try again later. ");
@@ -167,7 +169,7 @@ public class StaffController extends UserController {
 		String input = null;
 		do {
 			sel = utils.InputParser.parseInInteger(sc,
-					"Enter '0' to view enquiries. Enter '1' to respond to an enquiry. Enter 'C' to cancel. ", 0, 1,
+					"Enter '0' to view suggestions. Enter '1' to respond to a suggestion. Enter 'C' to cancel. ", 0, 1,
 					INPUT_MAX_ATTEMPTS, "C");
 		} while (sel == null);
 
