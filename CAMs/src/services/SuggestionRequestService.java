@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.AbstractMap.SimpleEntry;
 
 import enums.RequestStatus;
+import interfaces.IRequestService;
 import models.SuggestionRequest;
 import models.User;
 import models.Request;

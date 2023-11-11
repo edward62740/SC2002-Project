@@ -202,10 +202,12 @@ public class StaffController extends UserController {
 				}
 				input = "";
 				do {
-					utils.InputParser.parseInString(sc, "Enter the response. Enter 'C' to cancel.", INPUT_MAX_ATTEMPTS,
+					utils.InputParser.parseInString(sc, "Enter Y to approve and N to reject. ", INPUT_MAX_ATTEMPTS,
 							"C");
-				} while (input == null);
-				if (suggestionService.handleRequest(req.get(sel), input))
+				} while (input != "Y" || input != "N");
+				boolean approve = false;
+				if(input == "Y") approve = true;
+				if (suggestionService.handleRequest(req.get(sel), approve))
 					System.out.println("Response successful");
 				else
 					System.out.println("Unknown error");
