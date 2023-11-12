@@ -308,7 +308,7 @@ public class CCMController extends UserController {
 						INPUT_MAX_ATTEMPTS, "C");
 			} while (content == null);
 			if (suggestionService.editRequest(id, content))
-				System.out.println("Suggestion  successfully modified.");
+				System.out.println("Suggestion successfully modified.");
 			else
 				System.out.println("No such suggestion or cannot modify.");
 		} else // delete

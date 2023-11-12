@@ -1,10 +1,18 @@
 package models;
 
 import enums.RequestStatus;
+import enums.UserRole;
+import stores.AuthStore;
 
 public class SuggestionRequest extends Request {
 	public SuggestionRequest(String id, Integer campID, String content) {
 		super(id, campID, content);
+		if(AuthStore.getCurUser().getRole() == UserRole.CCM)
+		{
+			Student s = (Student) AuthStore.getCurUser();
+			s.setPoints(s.getPoints() + 1); // give one point for responding
+
+		}
 		// TODO Auto-generated constructor stub
 	}
 

@@ -1,7 +1,9 @@
 package controllers;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.AbstractMap.SimpleEntry;
 
 import services.AuthStudentService;
 import services.CampStaffService;
@@ -50,7 +52,7 @@ public class StaffController extends UserController {
 			System.out.println("7. Generate Report");
 			System.out.println(" -------------------- ");
 
-			c = utils.InputParser.parseInInteger(sc, "", 0, 9, INPUT_MAX_ATTEMPTS, "C");
+			c = utils.InputParser.parseInInteger(sc, "", 0, 7, INPUT_MAX_ATTEMPTS, "C");
 		} while (c == null);
 
 		switch (c) {
@@ -90,6 +92,9 @@ public class StaffController extends UserController {
 		Integer c_ccmSlot = null, c_totalSlots = null;
 		String input = null;
 		UserGroup c_userGroup = null;
+		LocalDateTime c_closingDate;
+		ArrayList<SimpleEntry<LocalDateTime, LocalDateTime>> c_dates;
+
 		do {
 			c_name = utils.InputParser.parseInString(sc, "Enter the camp name", 0, "C");
 
@@ -123,19 +128,55 @@ public class StaffController extends UserController {
 
 		} while (c_totalSlots == null);
 
-		c_staff = AuthStore.getCurUser().getUserID(); // Is this how i get the staff name?
+		c_staff = AuthStore.getCurUser().getUserID();
 
 		do {
 			c_description = utils.InputParser.parseInString(sc, "Enter the camp description", 0, "C");
 
 		} while (c_description == null);
+		
+/*		do {
+			c_closingDate = utils.InputParser.parseInInteger(sc, "Set max committee", 0, Integer.MAX_VALUE,
+					INPUT_MAX_ATTEMPTS, "C");
 
-		campStaffService.createACamp(c_name, c_userGroup, c_location, c_totalSlots, c_ccmSlot, c_staff, c_description);
+		} while (c_closingDate == null);
+		
+		do {
+			c_dates = utils.InputParser.parseInInteger(sc, "Set max committee", 0, Integer.MAX_VALUE,
+					INPUT_MAX_ATTEMPTS, "C");
+
+		} while (c_dates == null);
+*/
+		campStaffService.createACamp(c_name, c_userGroup, c_location, c_totalSlots, c_ccmSlot, c_staff, c_description, c_closingDate, c_dates);
 		System.out.println("Camp succesfully created!");
 	}
 
 	public static void editCamp() {
+		Integer id = null;
+		do {
+			id = utils.InputParser.parseInInteger(sc, "Enter the camp ID to edit. Enter 'C' to cancel. ", 0,
+					Integer.MAX_VALUE, INPUT_MAX_ATTEMPTS, "C");
+		} while (id == null);
 
+		if (!campStaffService.isCampOwned(id)) {
+			System.out.println("You do not own this camp");
+			return;
+		}
+		Integer choice = null;
+		do {
+			System.out.println("Select option to edit:");
+			System.out.println("1. Camp name");
+			System.out.println("2. Camp location");
+			System.out.println("3. Camp description");
+			choice = utils.InputParser.parseInInteger(sc, "", 0, 3, INPUT_MAX_ATTEMPTS, "C");
+		} while (choice == null);
+		if (campStaffService.editACamp(id, choice)) {
+			System.out.println("Camp successfully edited.");
+		}
+		else {
+			System.out.println("Camp failed to be edited");
+
+		}
 	}
 
 	public static void deleteCamp() {
@@ -173,15 +214,15 @@ public class StaffController extends UserController {
 					INPUT_MAX_ATTEMPTS, "C");
 		} while (sel == null);
 
-		ArrayList<SuggestionRequest> req = suggestionService
+		ArrayList<SuggestionRequest> sug = suggestionService
 				.getRequestByCamp(((Student) AuthStore.getCurUser()).getCommittee());
-		for (int i = 0; i < req.size(); i++) {
+		for (int i = 0; i < sug.size(); i++) {
 			System.out.print("Index: " + i);
-			RequestView.printReq(req.get(i));
+			RequestView.printReq(sug.get(i));
 		}
 
 		if (sel == 0) {
-			if (req.size() == 0)
+			if (sug.size() == 0)
 				System.out.println("There are no suggestions on the camp you are staff of.");
 			return;
 		}
@@ -194,18 +235,27 @@ public class StaffController extends UserController {
 						"C");
 			} while (sel == null);
 
-			if (sel >= 0 && sel < req.size()) {
+			if (sel >= 0 && sel < sug.size()) {
 
-				if (!(req.get(sel).getStatus() == RequestStatus.PENDING)) {
+				if (!(sug.get(sel).getStatus() == RequestStatus.PENDING)) {
 					System.out.println("Error. The suggestion is already responded to.");
 					return;
 				}
 				input = "";
+				boolean approval;
 				do {
 					utils.InputParser.parseInString(sc, "Enter the response. Enter 'C' to cancel.", INPUT_MAX_ATTEMPTS,
 							"C");
+					String choice = utils.InputParser.parseInString(sc, "Enter 1 to approve suggestion. Enter any other key to reject suggestion.", INPUT_MAX_ATTEMPTS,
+							"C");
+					if (choice == "1") {
+						approval = true;
+					}
+					else {
+						approval = false;
+					}
 				} while (input == null);
-				if (suggestionService.handleRequest(req.get(sel), input))
+				if (suggestionService.handleRequest(sug.get(sel), approval))
 					System.out.println("Response successful");
 				else
 					System.out.println("Unknown error");

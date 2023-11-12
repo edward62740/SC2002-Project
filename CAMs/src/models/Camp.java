@@ -18,6 +18,7 @@ public class Camp  {
 	 * Array of dates in the form [lower bound, upper bound]
 	 */
 	private ArrayList<SimpleEntry<LocalDateTime, LocalDateTime>> dates;
+	
 	/*
 	 * Indicates visibility of camp
 	 */
@@ -47,7 +48,7 @@ public class Camp  {
 	/* description of camp */
 	private String description;
 	
-	public Camp(int campId, String name, UserGroup userGroup, String location, int totalSlots, int ccmSlots, String staff, String description)
+	public Camp(int campId, String name, UserGroup userGroup, String location, int totalSlots, int ccmSlots, String staff, String description, LocalDateTime closingDate, ArrayList<SimpleEntry<LocalDateTime, LocalDateTime>> dates)
 	{
 		this.campId = campId;
 		this.name = name;
@@ -59,6 +60,7 @@ public class Camp  {
 		this.description = description;
 		this.committee = new ArrayList<String>();
 		this.registeredStudents = new ArrayList<String>();
+		this.closingDate= closingDate;
 		this.dates = new ArrayList<SimpleEntry<LocalDateTime, LocalDateTime>>();
 		this.visible = true;
 	}

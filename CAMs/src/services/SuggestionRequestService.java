@@ -102,8 +102,11 @@ public class SuggestionRequestService implements IRequestService {
 		if(req != null)
 		{
 			req.setResponderID(AuthStore.getCurUser().getUserID());
-			if(v)
+			if(v) {
 				req.setStatus(RequestStatus.ACCEPTED);
+				String id = req.getRequesterID();
+				//Need to add 1 point for approved suggestion
+			}
 			else 
 				req.setStatus(RequestStatus.REJECTED);
 

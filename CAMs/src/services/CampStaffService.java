@@ -1,8 +1,11 @@
 package services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Collectors;
+import java.util.Scanner;
+import java.util.AbstractMap.SimpleEntry;
 
 import enums.UserGroup;
 import models.Camp;
@@ -13,22 +16,46 @@ import stores.AuthStore;
 import stores.DataStore;
 
 public class CampStaffService {
-	
-	public boolean createACamp(String name, UserGroup userGroup, String location, Integer totalSlots, Integer ccmSlots, String staff, String description) {
+	static Scanner sc = new Scanner(System.in);
+
+	public boolean createACamp(String name, UserGroup userGroup, String location, Integer totalSlots, Integer ccmSlots, String staff, String description,LocalDateTime closingDate, ArrayList<SimpleEntry<LocalDateTime, LocalDateTime>> dates) {
 		
 		Integer campId = DataStore.getCampIndexCur();
-		Camp newcamp = new Camp(campId, name, userGroup, location, totalSlots, ccmSlots, staff, description);
+		Camp newcamp = new Camp(campId, name, userGroup, location, totalSlots, ccmSlots, staff, description, closingDate, dates);
 		((Staff)AuthStore.getCurUser()).addOwnedCamps(campId);
 		
 		DataStore.getCamps().put(campId, newcamp);
 		return true;
 	}
 	// HELP/////////////////////////////
-	public void editACamp() {
-		
+	public boolean editACamp(int id, int choice) {
+		HashMap<Integer, Camp> camps = DataStore.getCamps();			
+		Camp camp = camps.get(id);
+		switch (choice) {
+		case 1:
+			String newname = utils.InputParser.parseInString(sc, "Enter new camp name", 0, "C");
+			//set name
+			camp.setName(newname);
+			//System.out.println("Camp name successfully edited.");
+			break;
+		case 2:
+			String newloc = utils.InputParser.parseInString(sc, "Enter new camp location", 0, "C");			
+			//set location
+			camp.setLocation(newloc);
+			//System.out.println("Camp location successfully edited.");
+			break;
+		case 3:
+			String newdesc = utils.InputParser.parseInString(sc, "Enter new camp description", 0, "C");			
+			//set new description
+			camp.setDescription(newdesc);
+			//System.out.println("Camp description successfully edited.");
+			break;
+
+
+		}
+		return true;
 	}
 	
-	// HELP////////////////////////////
 	public boolean deleteACamp(Integer id) {
 		// UNDO add camp id to student entity AND add student username to camp entity
 		HashMap<Integer, Camp> camps = DataStore.getCamps();
@@ -36,8 +63,7 @@ public class CampStaffService {
 		if(camp != null)
 		{
 			if(!isCampOwned(id)) return false; // ensure that this never happens unless valid owner
-			// (HELP) Need help to implement a for loop to iterate through the list of registered students to delete them
-			// no need.. just delete from hashmap
+
 
 			camps.remove(id);
 			return true;
