@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import enums.UserGroup;
 import enums.UserRole;
+import interfaces.ICampStudentService;
 import models.Camp;
 import models.Student;
 import stores.AuthStore;
@@ -18,7 +19,7 @@ import stores.DataStore;
 /* review: downcasting here should be safe... since something else would have gone horribly wrong if authstore user
  * contains reference to wrong type or null while controller is running.
  */
-public class CampStudentService {
+public class CampStudentService implements ICampStudentService{
 	
 	utils.RangeChecker<LocalDateTime> dateChecker = new utils.RangeChecker<LocalDateTime>(LocalDateTime::compareTo);
 

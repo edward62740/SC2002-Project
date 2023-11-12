@@ -134,13 +134,13 @@ public class StaffController extends UserController {
 			c_description = utils.InputParser.parseInString(sc, "Enter the camp description", 0, "C");
 
 		} while (c_description == null);
-		
+
 /*		do {
 			c_closingDate = utils.InputParser.parseInInteger(sc, "Set max committee", 0, Integer.MAX_VALUE,
 					INPUT_MAX_ATTEMPTS, "C");
 
 		} while (c_closingDate == null);
-		
+
 		do {
 			c_dates = utils.InputParser.parseInInteger(sc, "Set max committee", 0, Integer.MAX_VALUE,
 					INPUT_MAX_ATTEMPTS, "C");
@@ -214,15 +214,15 @@ public class StaffController extends UserController {
 					INPUT_MAX_ATTEMPTS, "C");
 		} while (sel == null);
 
-		ArrayList<SuggestionRequest> sug = suggestionService
+		ArrayList<SuggestionRequest> req = suggestionService
 				.getRequestByCamp(((Student) AuthStore.getCurUser()).getCommittee());
-		for (int i = 0; i < sug.size(); i++) {
+		for (int i = 0; i < req.size(); i++) {
 			System.out.print("Index: " + i);
-			RequestView.printReq(sug.get(i));
+			RequestView.printReq(req.get(i));
 		}
 
 		if (sel == 0) {
-			if (sug.size() == 0)
+			if (req.size() == 0)
 				System.out.println("There are no suggestions on the camp you are staff of.");
 			return;
 		}
@@ -235,27 +235,20 @@ public class StaffController extends UserController {
 						"C");
 			} while (sel == null);
 
-			if (sel >= 0 && sel < sug.size()) {
+			if (sel >= 0 && sel < req.size()) {
 
-				if (!(sug.get(sel).getStatus() == RequestStatus.PENDING)) {
+				if (!(req.get(sel).getStatus() == RequestStatus.PENDING)) {
 					System.out.println("Error. The suggestion is already responded to.");
 					return;
 				}
 				input = "";
-				boolean approval;
 				do {
-					utils.InputParser.parseInString(sc, "Enter the response. Enter 'C' to cancel.", INPUT_MAX_ATTEMPTS,
+					utils.InputParser.parseInString(sc, "Enter Y to approve and N to reject. ", INPUT_MAX_ATTEMPTS,
 							"C");
-					String choice = utils.InputParser.parseInString(sc, "Enter 1 to approve suggestion. Enter any other key to reject suggestion.", INPUT_MAX_ATTEMPTS,
-							"C");
-					if (choice == "1") {
-						approval = true;
-					}
-					else {
-						approval = false;
-					}
-				} while (input == null);
-				if (suggestionService.handleRequest(sug.get(sel), approval))
+				} while (input != "Y" || input != "N");
+				boolean approve = false;
+				if(input == "Y") approve = true;
+				if (suggestionService.handleRequest(req.get(sel), approve))
 					System.out.println("Response successful");
 				else
 					System.out.println("Unknown error");

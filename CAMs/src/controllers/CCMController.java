@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import services.AuthStudentService;
-import services.CampCCMService;
 import services.CampStudentService;
 import services.EnquiryRequestService;
 
@@ -14,6 +13,7 @@ import views.CampView;
 import views.RequestView;
 import enums.RequestStatus;
 import enums.UserGroup;
+import interfaces.ICampStudentService;
 import models.Camp;
 import models.EnquiryRequest;
 import models.Request;
@@ -22,7 +22,7 @@ import models.SuggestionRequest;
 
 public class CCMController extends UserController {
 
-	private static CampCCMService campStudentService = new CampCCMService();
+	private static ICampStudentService campStudentService = new CampStudentService();
 
 	private static EnquiryRequestService enquiryService = new EnquiryRequestService();
 	private static SuggestionRequestService suggestionService = new SuggestionRequestService();

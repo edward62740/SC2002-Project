@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import services.AuthStudentService;
 import services.CampStudentService;
+import interfaces.ICampStudentService;
 import services.EnquiryRequestService;
 import stores.AuthStore;
 import views.CampView;
@@ -16,7 +17,7 @@ import models.Request;
 
 public class StudentController extends UserController {
 
-	private static CampStudentService campStudentService = new CampStudentService();
+	private static ICampStudentService campStudentService = new CampStudentService();
 	private static EnquiryRequestService enquiryService = new EnquiryRequestService();
 
 	private static final int INPUT_MAX_ATTEMPTS = 1;
