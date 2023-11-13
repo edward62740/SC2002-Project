@@ -48,7 +48,6 @@ public class MainApp {
 		students.put(s1.getUserID(), s1);
 		st.getOwnedCamps().add(1);
 		staff.put(st.getUserID(), st);
-		System.out.println(s.getFaculty());
 
 		MenuView.printSplashScreen();
 

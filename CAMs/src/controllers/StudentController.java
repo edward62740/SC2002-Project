@@ -26,21 +26,21 @@ public class StudentController extends UserController {
 		Integer c = 0;
 
 		do {
-			System.out.println(" --- STUDENT MENU --- ");
+			System.out.println("\033[1;34m--- STUDENT MENU ---\033[0m");
 			if (AuthStore.getCurUser().isDefaultPassword())
-				System.out.println("Warning! You are using the default password. ");
-			System.out.println("Select option:");
-			System.out.println("0. Exit");
+			    System.out.println("\033[1;31mWarning! You are using the default password.\033[0m");
+			System.out.println("\033[1mSelect option:\033[0m");
+			System.out.println("\033[1;36m0. Exit");
 			System.out.println("1. View open camps");
 			System.out.println("2. View registered camps");
 			System.out.println("3. Register for camp (as participant)");
-			System.out.println("4. Register for camp (as committee) ");
+			System.out.println("4. Register for camp (as committee)");
 			System.out.println("5. Deregister from camp");
 			System.out.println("6. Change password");
 			System.out.println("7. Submit enquiry");
 			System.out.println("8. View enquiry");
-			System.out.println("9. Edit/delete enquiry");
-			System.out.println(" -------------------- ");
+			System.out.println("9. Edit/delete enquiry\033[0m");
+			System.out.println("\033[1;34m----------------------\033[0m");
 
 			c = utils.InputParser.parseInInteger(sc, "", 0, 9, INPUT_MAX_ATTEMPTS, "C");
 		} while (c == null);

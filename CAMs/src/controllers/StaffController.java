@@ -42,19 +42,19 @@ public class StaffController extends UserController {
 		Integer c = 0;
 
 		do {
-			System.out.println(" --- STAFF MENU --- ");
+			System.out.println("\033[1;35m--- STAFF MENU ---\033[0m");
 			if (AuthStore.getCurUser().isDefaultPassword())
-				System.out.println("Warning! You are using the default password. ");
-			System.out.println("Select option:");
-			System.out.println("0. Exit");
+			    System.out.println("\033[1;31mWarning! You are using the default password.\033[0m");
+			System.out.println("\033[1mSelect option:\033[0m");
+			System.out.println("\033[1;36m0. Exit");
 			System.out.println("1. Create Camp");
 			System.out.println("2. Edit Camp");
 			System.out.println("3. Delete Camp");
 			System.out.println("4. View Owned Camps");
 			System.out.println("5. View/Reply Suggestions");
 			System.out.println("6. View/Reply Enquiry");
-			System.out.println("7. Generate Report");
-			System.out.println(" -------------------- ");
+			System.out.println("7. Generate Report\033[0m");
+			System.out.println("\033[1;35m----------------------\033[0m");
 
 			c = utils.InputParser.parseInInteger(sc, "", 0, 7, INPUT_MAX_ATTEMPTS, "C");
 		} while (c == null);
