@@ -11,6 +11,7 @@ import java.util.AbstractMap.SimpleEntry;
 
 import services.AuthStudentService;
 import services.CampStaffService;
+import services.CampStudentService;
 import services.EnquiryRequestService;
 import services.SuggestionRequestService;
 
@@ -20,6 +21,7 @@ import views.CampView;
 import views.RequestView;
 import enums.RequestStatus;
 import enums.UserGroup;
+import interfaces.ICampStudentService;
 import models.Camp;
 import models.EnquiryRequest;
 import models.SuggestionRequest;
@@ -31,6 +33,7 @@ import enums.UserGroup;
 public class StaffController extends UserController {
 
 	private static final int INPUT_MAX_ATTEMPTS = 1;
+	private static ICampStudentService campStudentService = new CampStudentService();
 	private static EnquiryRequestService enquiryService = new EnquiryRequestService();
 	private static SuggestionRequestService suggestionService = new SuggestionRequestService();
 
@@ -50,11 +53,12 @@ public class StaffController extends UserController {
 			System.out.println("1. Create Camp");
 			System.out.println("2. Edit Camp");
 			System.out.println("3. Delete Camp");
-			System.out.println("4. View Owned Camps");
-			System.out.println("5. View/Reply Suggestions");
-			System.out.println("6. View/Reply Enquiry");
-			System.out.println("7. Change password");
-			System.out.println("8. Generate Report\033[0m");
+			System.out.println("4. View All Camps");
+			System.out.println("5. View Owned Camps");
+			System.out.println("6. View/Reply Suggestions");
+			System.out.println("7. View/Reply Enquiry");
+			System.out.println("8. Change password");
+			System.out.println("9. Generate Report\033[0m");
 			System.out.println("\033[1;35m----------------------\033[0m");
 
 			c = utils.InputParser.parseInInteger(sc, "", 0, 7, INPUT_MAX_ATTEMPTS, "C");
@@ -74,17 +78,20 @@ public class StaffController extends UserController {
 			deleteCamp();
 			break;
 		case 4:
-			viewOwnedCamps();
+			viewOpenCamps();
 			break;
 		case 5:
-			viewReplySuggestions();
+			viewOwnedCamps();
 			break;
 		case 6:
-			viewReplyEnquiry();
+			viewReplySuggestions();
 			break;
 		case 7:
-			updatePassword();
+			viewReplyEnquiry();
+			break;
 		case 8:
+			updatePassword();
+		case 9:
 			System.out.println("Placeholder to use CSV service");
 			break;
 
@@ -142,20 +149,9 @@ public class StaffController extends UserController {
 
 		} while (c_description == null);
 
-/*		do {
-			c_closingDate = utils.InputParser.parseInInteger(sc, "Set max committee", 0, Integer.MAX_VALUE,
-					INPUT_MAX_ATTEMPTS, "C");
 
-		} while (c_closingDate == null);
-
-		do {
-			c_dates = utils.InputParser.parseInInteger(sc, "Set max committee", 0, Integer.MAX_VALUE,
-					INPUT_MAX_ATTEMPTS, "C");
-
-		} while (c_dates == null);
-*/
 		
-	
+
 		do {
 			c_closingDate = utils.InputParser.parseInLocalDateTime(sc,
 					"Please enter a valid closing date and time in the format yyyy-MM-dd HH:mm.", 0, "C");
@@ -229,7 +225,31 @@ public class StaffController extends UserController {
 		else
 			System.out.println("Operation failed. ");
 	}
+	
+	private static void viewOpenCamps() {
+		String input = "";
+		UserGroup userGroup = null;
+		do {
+			System.out.println("Filter by faculty. Enter 'ALL' for all. Available options: ");
+			for (UserGroup u : UserGroup.values())
+				System.out.print(u + ", ");
+			input = sc.nextLine();
+			for (UserGroup u : UserGroup.values())
+				if (input.strip().equals(u.toString())) {
+					userGroup = u;
+				}
+			if (userGroup == null)
+				System.out.println("Invalid user group. ");
+		} while (userGroup == null);
 
+		ArrayList<Camp> camps = campStudentService.getCamps(userGroup, false);
+		for (Camp i : camps) {
+			CampView.printCamp(i, AuthStore.getCurUser());
+		}
+		if (camps.size() == 0)
+			System.out.println("There are no available camps. Modify your search or try again later. ");
+	}
+	
 	public static void viewOwnedCamps() {
 		ArrayList<Camp> camps = campStaffService.getOwnedCamps();
 		for (Camp i : camps) {
