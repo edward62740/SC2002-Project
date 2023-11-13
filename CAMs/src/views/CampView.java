@@ -3,6 +3,7 @@ package views;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.stream.IntStream;
 
 import enums.UserRole;
 import models.Camp;
@@ -26,13 +27,7 @@ public class CampView {
 		System.out.println("Remaining Committee Slots: " + (camp.getCcmSlots() - camp.getCommittee().size() + " out of " + camp.getCcmSlots()));
 		if(camp.getClosingDate() != null)System.out.println("Registration closing date: " + camp.getClosingDate().format(formatter));
 		System.out.println("Camp dates: ");
-		if(camp.getDates() != null)
-		{
-			for(SimpleEntry<LocalDateTime, LocalDateTime> d : camp.getDates())
-			{
-				System.out.println(d.getKey().format(formatter) + " - " + d.getValue().format(formatter));
-			}
-		}
+		printDateArray(camp);
 		
 		if(user.getRole() == UserRole.STAFF || user.getRole() == UserRole.CCM)
 		{
@@ -49,6 +44,21 @@ public class CampView {
 		if(camp.getCommittee().contains(user.getUserID())) System.out.println("Position: Committee");
 		else if(camp.getRegisteredStudents().contains(user.getUserID())) System.out.println("Position: Member");
 		else System.out.println("Position: None");
+	}
+	
+	public static void printDateArray(Camp camp)
+	{
+		
+		if(camp.getDates() != null)
+		{
+			IntStream.range(0, camp.getDates().size())
+            .forEach(index ->
+                System.out.println(index + ": " +
+                		camp.getDates().get(index).getKey().format(formatter) + " - " +
+                		camp.getDates().get(index).getValue().format(formatter)
+                )
+            );
+		}
 	}
 	
 

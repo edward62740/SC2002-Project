@@ -1,8 +1,12 @@
 package controllers;
 
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import java.util.AbstractMap.SimpleEntry;
 
 import services.AuthStudentService;
@@ -92,8 +96,8 @@ public class StaffController extends UserController {
 		Integer c_ccmSlot = null, c_totalSlots = null;
 		String input = null;
 		UserGroup c_userGroup = null;
-		LocalDateTime c_closingDate;
-		ArrayList<SimpleEntry<LocalDateTime, LocalDateTime>> c_dates;
+		LocalDateTime c_closingDate = null;
+		SimpleEntry<LocalDateTime, LocalDateTime> c_dates = null;
 
 		do {
 			c_name = utils.InputParser.parseInString(sc, "Enter the camp name", 0, "C");
@@ -147,6 +151,31 @@ public class StaffController extends UserController {
 
 		} while (c_dates == null);
 */
+		
+	
+		do {
+			c_closingDate = utils.InputParser.parseInLocalDateTime(sc,
+					"Please enter a valid closing date and time in the format yyyy-MM-dd HH:mm.", 0, "C");
+		} while (c_closingDate == null);
+		// set new description
+	
+		System.out.println("Please enter a valid date and time in the format yyyy-MM-dd HH:mm");
+		LocalDateTime dt1 = null;
+		LocalDateTime dt2 = null;
+		do {
+			dt1 = utils.InputParser.parseInLocalDateTime(sc, "Starting date: ", 0, "C");
+		} while (dt1 == null);
+		do {
+			dt2 = utils.InputParser.parseInLocalDateTime(sc, "Ending date: ", 0, "C");
+		} while (dt2 == null);
+
+		if (dt2.isBefore(dt1)) {
+			System.out.println("Starting date must be BEFORE ending date");
+			return;
+		}
+
+		c_dates = new SimpleEntry<>(dt1, dt2);
+		
 		campStaffService.createACamp(c_name, c_userGroup, c_location, c_totalSlots, c_ccmSlot, c_staff, c_description, c_closingDate, c_dates);
 		System.out.println("Camp succesfully created!");
 	}
@@ -168,7 +197,10 @@ public class StaffController extends UserController {
 			System.out.println("1. Camp name");
 			System.out.println("2. Camp location");
 			System.out.println("3. Camp description");
-			choice = utils.InputParser.parseInInteger(sc, "", 0, 3, INPUT_MAX_ATTEMPTS, "C");
+			System.out.println("4. Camp (registration) closing date");
+			System.out.println("5. Camp dates");
+			
+			choice = utils.InputParser.parseInInteger(sc, "", 0, 5, INPUT_MAX_ATTEMPTS, "C");
 		} while (choice == null);
 		if (campStaffService.editACamp(id, choice)) {
 			System.out.println("Camp successfully edited.");
@@ -214,8 +246,10 @@ public class StaffController extends UserController {
 					INPUT_MAX_ATTEMPTS, "C");
 		} while (sel == null);
 
-		ArrayList<SuggestionRequest> req = suggestionService
-				.getRequestByCamp(((Student) AuthStore.getCurUser()).getCommittee());
+		ArrayList<SuggestionRequest> req = ((Staff) AuthStore.getCurUser()).getOwnedCamps().stream()
+		        .map(suggestionService::getRequestByCamp)
+		        .flatMap(List::stream)
+		        .collect(Collectors.toCollection(ArrayList::new));
 		for (int i = 0; i < req.size(); i++) {
 			System.out.print("Index: " + i);
 			RequestView.printReq(req.get(i));
@@ -241,13 +275,14 @@ public class StaffController extends UserController {
 					System.out.println("Error. The suggestion is already responded to.");
 					return;
 				}
-				input = "";
+				input = null;
 				do {
-					utils.InputParser.parseInString(sc, "Enter Y to approve and N to reject. ", INPUT_MAX_ATTEMPTS,
+					input = utils.InputParser.parseInString(sc, "Enter Y to approve and N to reject. ", INPUT_MAX_ATTEMPTS,
 							"C");
-				} while (input != "Y" || input != "N");
+					input.strip();
+				} while (!input.equals("Y") && !input.equals("N"));
 				boolean approve = false;
-				if(input == "Y") approve = true;
+				if(input.equals("Y")) approve = true;
 				if (suggestionService.handleRequest(req.get(sel), approve))
 					System.out.println("Response successful");
 				else
@@ -267,8 +302,10 @@ public class StaffController extends UserController {
 					INPUT_MAX_ATTEMPTS, "C");
 		} while (sel == null);
 
-		ArrayList<EnquiryRequest> req = enquiryService
-				.getRequestByCamp(((Student) AuthStore.getCurUser()).getCommittee());
+		ArrayList<EnquiryRequest> req = ((Staff) AuthStore.getCurUser()).getOwnedCamps().stream()
+		        .map(enquiryService::getRequestByCamp)
+		        .flatMap(List::stream)
+		        .collect(Collectors.toCollection(ArrayList::new));
 		for (int i = 0; i < req.size(); i++) {
 			System.out.print("Index: " + i);
 			RequestView.printReq(req.get(i));

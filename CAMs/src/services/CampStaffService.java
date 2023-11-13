@@ -14,63 +14,109 @@ import models.Student;
 import models.Staff;
 import stores.AuthStore;
 import stores.DataStore;
+import views.CampView;
 
 public class CampStaffService {
 	static Scanner sc = new Scanner(System.in);
 
-	public boolean createACamp(String name, UserGroup userGroup, String location, Integer totalSlots, Integer ccmSlots, String staff, String description,LocalDateTime closingDate, ArrayList<SimpleEntry<LocalDateTime, LocalDateTime>> dates) {
-		
+	public boolean createACamp(String name, UserGroup userGroup, String location, Integer totalSlots, Integer ccmSlots,
+			String staff, String description, LocalDateTime closingDate,
+			SimpleEntry<LocalDateTime, LocalDateTime> dates) {
+
 		Integer campId = DataStore.getCampIndexCur();
-		Camp newcamp = new Camp(campId, name, userGroup, location, totalSlots, ccmSlots, staff, description, closingDate, dates);
-		((Staff)AuthStore.getCurUser()).addOwnedCamps(campId);
-		
+		Camp newcamp = new Camp(campId, name, userGroup, location, totalSlots, ccmSlots, staff, description,
+				closingDate);
+		newcamp.getDates().add(dates);
+		((Staff) AuthStore.getCurUser()).addOwnedCamps(campId);
+
 		DataStore.getCamps().put(campId, newcamp);
 		return true;
 	}
+
 	// HELP/////////////////////////////
 	public boolean editACamp(int id, int choice) {
-		HashMap<Integer, Camp> camps = DataStore.getCamps();			
+		HashMap<Integer, Camp> camps = DataStore.getCamps();
 		Camp camp = camps.get(id);
 		switch (choice) {
 		case 1:
 			String newname = utils.InputParser.parseInString(sc, "Enter new camp name", 0, "C");
-			//set name
+			// set name
 			camp.setName(newname);
-			//System.out.println("Camp name successfully edited.");
+			// System.out.println("Camp name successfully edited.");
 			break;
 		case 2:
-			String newloc = utils.InputParser.parseInString(sc, "Enter new camp location", 0, "C");			
-			//set location
+			String newloc = utils.InputParser.parseInString(sc, "Enter new camp location", 0, "C");
+			// set location
 			camp.setLocation(newloc);
-			//System.out.println("Camp location successfully edited.");
+			// System.out.println("Camp location successfully edited.");
 			break;
 		case 3:
-			String newdesc = utils.InputParser.parseInString(sc, "Enter new camp description", 0, "C");			
-			//set new description
+			String newdesc = utils.InputParser.parseInString(sc, "Enter new camp description", 0, "C");
+			// set new description
 			camp.setDescription(newdesc);
-			//System.out.println("Camp description successfully edited.");
+			// System.out.println("Camp description successfully edited.");
 			break;
+		case 4:
+			LocalDateTime dt = null;
+			do {
+				dt = utils.InputParser.parseInLocalDateTime(sc,
+						"Please enter a valid date and time in the format yyyy-MM-dd HH:mm.", 0, "C");
+			} while (dt == null);
+			// set new description
+			camp.setClosingDate(dt);
 
+			break;
+		case 5:
+
+			CampView.printDateArray(camp);
+			Integer sel = null;
+			do {
+				sel = utils.InputParser.parseInInteger(sc, "Enter index of date to edit or -1 to add.", -1,
+						camp.getDates().size(), 1, "C");
+			} while (sel == null);
+			System.out.println("Please enter a valid date and time in the format yyyy-MM-dd HH:mm");
+			LocalDateTime dt1 = null;
+			LocalDateTime dt2 = null;
+			do {
+				dt1 = utils.InputParser.parseInLocalDateTime(sc, "Starting date: ", 0, "C");
+			} while (dt1 == null);
+			do {
+				dt2 = utils.InputParser.parseInLocalDateTime(sc, "Ending date: ", 0, "C");
+			} while (dt2 == null);
+
+			if (dt2.isBefore(dt1)) {
+				System.out.println("Starting date must be BEFORE ending date");
+				return false;
+			}
+
+			SimpleEntry<LocalDateTime, LocalDateTime> newEntry = new SimpleEntry<>(dt1, dt2);
+			camp.getDates().add(newEntry);
+
+			// LocalDateTime dt = utils.InputParser.parseInLocalDateTime(sc, "Enter new camp
+			// description", 0, "C");
+			// set new description
+			// camp.setClosingDate(dt);
+
+			break;
 
 		}
 		return true;
 	}
-	
+
 	public boolean deleteACamp(Integer id) {
 		// UNDO add camp id to student entity AND add student username to camp entity
 		HashMap<Integer, Camp> camps = DataStore.getCamps();
 		Camp camp = camps.get(id);
-		if(camp != null)
-		{
-			if(!isCampOwned(id)) return false; // ensure that this never happens unless valid owner
-
+		if (camp != null) {
+			if (!isCampOwned(id))
+				return false; // ensure that this never happens unless valid owner
 
 			camps.remove(id);
 			return true;
 		}
 		return false;
 	}
-	
+
 	public ArrayList<Camp> getCamps(UserGroup userGroup, boolean showInvisible) {
 		HashMap<Integer, Camp> camps = DataStore.getCamps();
 
@@ -80,7 +126,7 @@ public class CampStaffService {
 				.collect(Collectors.toCollection(ArrayList::new));
 		return ret;
 	}
-	
+
 	public ArrayList<Camp> getOwnedCamps() {
 		Staff st = (Staff) AuthStore.getCurUser();
 		ArrayList<Integer> ref = st.getOwnedCamps();
@@ -98,12 +144,15 @@ public class CampStaffService {
 		return ownedCamps;
 
 	}
-	
+
 	public boolean isCampOwned(Integer id) {
-		if((((Staff)AuthStore.getCurUser()).getOwnedCamps().contains(id))) return true;
-		else return false;
+		if ((((Staff) AuthStore.getCurUser()).getOwnedCamps().contains(id)))
+			return true;
+		else
+			return false;
 	}
+
 	public void generateAReport() {
-		
+
 	}
 }

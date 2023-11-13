@@ -46,6 +46,7 @@ public class MainApp {
 		DataStore.getCamps().put(1, camp1);
 		students.put(s.getUserID(), s);
 		students.put(s1.getUserID(), s1);
+		st.getOwnedCamps().add(1);
 		staff.put(st.getUserID(), st);
 		System.out.println(s.getFaculty());
 

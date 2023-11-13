@@ -111,6 +111,11 @@ public class EnquiryRequestService implements IRequestService {
 				s.setPoints(s.getPoints() + 1); // give one point for responding
 				return true;
 			}
+			else if(AuthStore.getCurUser().getRole() == UserRole.STAFF)
+			{
+				// staff gets no points..
+				return true;
+			}
 		}
 		return false;
 	}
