@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.AbstractMap.SimpleEntry;
 
 import enums.RequestStatus;
+import enums.UserRole;
 import interfaces.IRequestService;
 import models.SuggestionRequest;
 import models.User;
@@ -106,6 +107,10 @@ public class SuggestionRequestService implements IRequestService {
 			if(v) {
 				req.setStatus(RequestStatus.ACCEPTED);
 				String id = req.getRequesterID();
+				
+				Student s = DataStore.getStudents().get(id);
+				if(s.getRole() == UserRole.CCM)
+					s.setPoints(s.getPoints() + 1); // give one point for accepted suggestion
 				//Need to add 1 point for approved suggestion
 			}
 			else 

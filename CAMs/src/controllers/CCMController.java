@@ -33,11 +33,11 @@ public class CCMController extends UserController {
 		Integer c = 0;
 
 		do {
-			System.out.println(" --- CAMP COMMITTEE MENU --- ");
+			System.out.println("\033[1;34m--- CAMP COMMITTEE MENU ---\033[0m");
 			if (AuthStore.getCurUser().isDefaultPassword())
-				System.out.println("Warning! You are using the default password. ");
-			System.out.println("Select option:");
-			System.out.println("1. View open camps");
+			    System.out.println("\033[1;31mWarning! You are using the default password.\033[0m");
+			System.out.println("\033[1mSelect option:\033[0m");
+			System.out.println("\033[1;36m1. View open camps");
 			System.out.println("2. View registered camps");
 			System.out.println("3. Register for camp (as participant)");
 			System.out.println("4. Deregister from camp");
@@ -46,9 +46,8 @@ public class CCMController extends UserController {
 			System.out.println("7. View suggestions");
 			System.out.println("8. New suggestion");
 			System.out.println("9. Edit/Delete suggestion");
-			System.out.println("10. Generate report");
-			System.out.println("0. Exit");
-			System.out.println(" -------------------- ");
+			System.out.println("10. Generate report\033[0m");
+			System.out.println("\033[1;34m----------------------\033[0m");
 
 			c = utils.InputParser.parseInInteger(sc, "", 0, 10, INPUT_MAX_ATTEMPTS, "C");
 		} while (c == null);

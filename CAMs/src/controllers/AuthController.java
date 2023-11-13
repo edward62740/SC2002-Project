@@ -22,10 +22,10 @@ public class AuthController {
 
 			while (true) {
 				
-				System.out.println("Select login domain:");
-				System.out.println("1. Student");
+				System.out.println("\033[1mSelect login domain:\033[0m");
+				System.out.println("\033[1;36m1. Student");
 				System.out.println("2. Staff ");
-				System.out.println("9. Exit ");
+				System.out.println("\033[1;31m9. Exit\033[0m");
 
 				String input = sc.nextLine();
 
@@ -51,7 +51,6 @@ public class AuthController {
 				authService = new AuthStudentService();
 				break;
 			case 2:
-				System.out.println("ERROR NOT IMPLEMENTED");
 				authService = new AuthStaffService();
 				break;
 			}

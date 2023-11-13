@@ -48,7 +48,7 @@ public class Camp  {
 	/* description of camp */
 	private String description;
 	
-	public Camp(int campId, String name, UserGroup userGroup, String location, int totalSlots, int ccmSlots, String staff, String description, LocalDateTime closingDate, ArrayList<SimpleEntry<LocalDateTime, LocalDateTime>> dates)
+	public Camp(int campId, String name, UserGroup userGroup, String location, int totalSlots, int ccmSlots, String staff, String description, LocalDateTime closingDate)
 	{
 		this.campId = campId;
 		this.name = name;
@@ -61,6 +61,22 @@ public class Camp  {
 		this.committee = new ArrayList<String>();
 		this.registeredStudents = new ArrayList<String>();
 		this.closingDate= closingDate;
+		this.dates = new ArrayList<SimpleEntry<LocalDateTime, LocalDateTime>>();
+		this.visible = true;
+	}
+	
+	public Camp(int campId, String name, UserGroup userGroup, String location, int totalSlots, int ccmSlots, String staff, String description)
+	{
+		this.campId = campId;
+		this.name = name;
+		this.userGroup = userGroup;
+		this.location = location;
+		this.totalSlots = totalSlots;
+		this.ccmSlots = ccmSlots;
+		this.staff = staff;
+		this.description = description;
+		this.committee = new ArrayList<String>();
+		this.registeredStudents = new ArrayList<String>();
 		this.dates = new ArrayList<SimpleEntry<LocalDateTime, LocalDateTime>>();
 		this.visible = true;
 	}
