@@ -1,0 +1,2 @@
+Id,Name,Password,Faculty,IsDefaultPassword,Role,Camps,PrevCamps,Committtee,Points
+2,Biku,Test123,EEE,FALSE,Student,"1,2,3","4,5",2,5

@@ -1,5 +1,3 @@
 Id,Name,Dates,Visible,ClosingDate,UserGroup,Location,TotalSlots,CCMSlots,Staff,Committee,RegisteredStudent,Description
-1,Emilia's Camp,,,,,,,,,,,
-2,Biku's Camp,,,,,,,,,,,
-3,Miku's Camp,,,,,,,,,,,
-4,Bocchi's Camp,,,,,,,,,,,
+1,Emilia's Camp,"1 Jan,2 Jan,3 Jan",TRUE,25-Dec,SCSE,North Spine,100,10,YEE,"1,2,3","1,2,3,4,5","SCSE's FOP 2024, TEST"
+2,Biku's Camp,"1 Jan,2 Jan,3 Jan",TRUE,25-Dec,EEE,South Spine,100,10,YEE,"1,2,5","1,2,3,4,5","EEE's FOP 2024, EEEEEEEEE"

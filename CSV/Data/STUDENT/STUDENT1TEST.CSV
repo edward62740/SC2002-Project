@@ -1,0 +1,2 @@
+Id,Name,Password,Faculty,IsDefaultPassword,Role,Camps,PrevCamps,Committtee,Points
+"1","Emilia","Test123","SCSE","TRUE","Student","1,2,3","4,5","1","3",
