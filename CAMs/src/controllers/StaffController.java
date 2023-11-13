@@ -53,7 +53,8 @@ public class StaffController extends UserController {
 			System.out.println("4. View Owned Camps");
 			System.out.println("5. View/Reply Suggestions");
 			System.out.println("6. View/Reply Enquiry");
-			System.out.println("7. Generate Report\033[0m");
+			System.out.println("7. Change password");
+			System.out.println("8. Generate Report\033[0m");
 			System.out.println("\033[1;35m----------------------\033[0m");
 
 			c = utils.InputParser.parseInInteger(sc, "", 0, 7, INPUT_MAX_ATTEMPTS, "C");
@@ -82,6 +83,8 @@ public class StaffController extends UserController {
 			viewReplyEnquiry();
 			break;
 		case 7:
+			updatePassword();
+		case 8:
 			System.out.println("Placeholder to use CSV service");
 			break;
 
