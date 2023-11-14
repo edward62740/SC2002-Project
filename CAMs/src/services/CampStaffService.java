@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.AbstractMap.SimpleEntry;
 
 import enums.UserGroup;
+import enums.UserRole;
 import interfaces.ICampStaffService;
 import models.Camp;
 
@@ -34,7 +35,7 @@ public class CampStaffService implements ICampStaffService {
 		return true;
 	}
 
-	// HELP/////////////////////////////
+
 	public boolean editACamp(int id, int choice) {
 		HashMap<Integer, Camp> camps = DataStore.getCamps();
 		Camp camp = camps.get(id);
@@ -111,7 +112,15 @@ public class CampStaffService implements ICampStaffService {
 		if (camp != null) {
 			if (!isCampOwned(id))
 				return false; // ensure that this never happens unless valid owner
-
+			// remove enum CCM from committee since committee has only one such camp they are committee of.
+			ArrayList<String> committee = camp.getCommittee();
+			for(String s : committee)
+			{
+				if(DataStore.getStudents().get(s) != null)
+				{
+					DataStore.getStudents().get(s).setRole(UserRole.STUDENT);
+				}
+			}
 			camps.remove(id);
 			return true;
 		}
