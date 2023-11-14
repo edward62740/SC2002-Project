@@ -1,8 +1,10 @@
 package models;
+import java.io.Serializable;
+
 import enums.UserGroup;
 import enums.UserRole;
 
-public class User {
+public class User implements Serializable {
 	
 	/* User id xxxx in email xxxx@ntu.edu.sg */
 	private String userID;

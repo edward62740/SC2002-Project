@@ -1,13 +1,16 @@
 package models;
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.AbstractMap.SimpleEntry;
 
 import enums.UserGroup;
 
 
 
-public class Camp  {
+public class Camp {
 	
 	/* Integer id referencing camp. Must be aliased by integer id key for each instance in DataStore */
 	private int campId;
@@ -169,5 +172,6 @@ public class Camp  {
 	public void setCcmSlots(int ccmSlots) {
 		this.ccmSlots = ccmSlots;
 	}
-	
+
+
 }

@@ -7,21 +7,25 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+
+
 import java.util.AbstractMap.SimpleEntry;
 
 import services.AuthStudentService;
 import services.CampStaffService;
 import services.CampStudentService;
 import services.EnquiryRequestService;
+import services.FileService;
 import services.SuggestionRequestService;
 
 import stores.AuthStore;
+import stores.DataStore;
 import utils.InputParser;
 import views.CampView;
 import views.RequestView;
 import enums.RequestStatus;
 import enums.UserGroup;
-import interfaces.ICampStudentService;
+import interfaces.ICampStaffService;
 import models.Camp;
 import models.EnquiryRequest;
 import models.SuggestionRequest;
@@ -33,11 +37,11 @@ import enums.UserGroup;
 public class StaffController extends UserController {
 
 	private static final int INPUT_MAX_ATTEMPTS = 1;
-	private static ICampStudentService campStudentService = new CampStudentService();
+	//private static ICampStudentService campStudentService = new CampStudentService();
 	private static EnquiryRequestService enquiryService = new EnquiryRequestService();
 	private static SuggestionRequestService suggestionService = new SuggestionRequestService();
 
-	private static CampStaffService campStaffService = new CampStaffService();
+	private static ICampStaffService campStaffService = new CampStaffService();
 
 	static Scanner sc = new Scanner(System.in);
 
@@ -58,15 +62,16 @@ public class StaffController extends UserController {
 			System.out.println("6. View/Reply Suggestions");
 			System.out.println("7. View/Reply Enquiry");
 			System.out.println("8. Change password");
-			System.out.println("9. Generate Report\033[0m");
+			System.out.println("9. Generate Report");
+			System.out.println("10. Performance of CCMs\033[0m");
 			System.out.println("\033[1;35m----------------------\033[0m");
 
-			c = utils.InputParser.parseInInteger(sc, "", 0, 7, INPUT_MAX_ATTEMPTS, "C");
+			c = utils.InputParser.parseInInteger(sc, "", 0, 10, INPUT_MAX_ATTEMPTS, "C");
 		} while (c == null);
 
 		switch (c) {
 		case 0:
-			System.out.println("Shutting down CAMs...");
+			System.out.println("Logging out...");
 			return true;
 		case 1:
 			createCamp();
@@ -91,8 +96,12 @@ public class StaffController extends UserController {
 			break;
 		case 8:
 			updatePassword();
+			break;
 		case 9:
-			System.out.println("Placeholder to use CSV service");
+			generateReport();
+			break;
+		case 10:
+			performanceCCM();
 			break;
 
 		}
@@ -242,7 +251,7 @@ public class StaffController extends UserController {
 				System.out.println("Invalid user group. ");
 		} while (userGroup == null);
 
-		ArrayList<Camp> camps = campStudentService.getCamps(userGroup, false);
+		ArrayList<Camp> camps = campStaffService.getCamps(userGroup, false);
 		for (Camp i : camps) {
 			CampView.printCamp(i, AuthStore.getCurUser());
 		}
@@ -369,8 +378,33 @@ public class StaffController extends UserController {
 		}
 	}
 
-	public static void generateReport() {
-
+	private static void generateReport()
+	{
+		ArrayList<Integer> camps = campStaffService.getOwnedCamps().stream()
+                .map(Camp::getCampId)
+                .collect(Collectors.toCollection(ArrayList::new));
+		if(camps.size() == 0) System.out.println("You have no camps to generate report for.");
+		FileService.generateCsvFromCamp(sc, camps);
 	}
-
+	
+	private static void performanceCCM()
+	{
+		ArrayList<Camp> camps = campStaffService.getOwnedCamps();
+		for(Camp c : camps)
+		{
+			ArrayList<String> s = c.getCommittee();
+			System.out.print("Camp " + c.getCampId() + " : " + c.getName() + "\n");
+			for(String s1 : s)
+			{
+				if(DataStore.getStudents().containsKey(s1)) 
+				{
+					Student student = DataStore.getStudents().get(s1);
+					System.out.print("CCM: " + student.getUserID() + ", points: " + student.getPoints());
+					
+				}
+					
+			}
+			System.out.print("\n\n");
+		}
+	}
 }

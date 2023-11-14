@@ -1,0 +1,3 @@
+Camp ID,Name,Date,Closing Date,User Group,Location,Student Slots,Committee Slots,Staff Name,List of Committee,List of Students,Description
+0,testcamp1,2023-04-23 10:00 to 2023-04-23 10:00;,2023-04-23 10:00,ALL,sch1,5,10,ARVI,,,desc of camp1,
+1,newcamp2,2023-04-23 10:00 to 2023-04-23 10:00;2023-04-23 10:00 to 2023-04-23 10:00;,2023-04-23 10:00,CoE,sch2,10,5,ARVI,,,desc of camp2,

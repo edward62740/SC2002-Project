@@ -47,7 +47,7 @@ public class StudentController extends UserController {
 
 		switch (c) {
 		case 0:
-			System.out.println("Shutting down CAMs...");
+			System.out.println("Logging out...");
 			return true;
 		case 1:
 			viewOpenCamps();

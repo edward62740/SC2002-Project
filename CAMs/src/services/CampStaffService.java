@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.AbstractMap.SimpleEntry;
 
 import enums.UserGroup;
+import interfaces.ICampStaffService;
 import models.Camp;
 
 import models.Student;
@@ -16,7 +17,7 @@ import stores.AuthStore;
 import stores.DataStore;
 import views.CampView;
 
-public class CampStaffService {
+public class CampStaffService implements ICampStaffService {
 	static Scanner sc = new Scanner(System.in);
 
 	public boolean createACamp(String name, UserGroup userGroup, String location, Integer totalSlots, Integer ccmSlots,

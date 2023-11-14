@@ -73,6 +73,7 @@ public class AuthController {
 			}
 		} while (!isOk);
 		System.out.println("Log in successful, " + AuthStore.getCurUser().getUserID() + "\n");
+
 		return true;
 		
 	}

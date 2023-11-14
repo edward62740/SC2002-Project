@@ -6,9 +6,10 @@ import java.util.Scanner;
 import services.AuthStudentService;
 import services.CampStudentService;
 import services.EnquiryRequestService;
-
+import services.FileService;
 import services.SuggestionRequestService;
 import stores.AuthStore;
+import stores.DataStore;
 import views.CampView;
 import views.RequestView;
 import enums.RequestStatus;
@@ -54,7 +55,7 @@ public class CCMController extends UserController {
 
 		switch (c) {
 		case 0:
-			System.out.println("Shutting down CAMs...");
+			System.out.println("Logging out...");
 			return true;
 		case 1:
 			viewOpenCamps();
@@ -84,7 +85,7 @@ public class CCMController extends UserController {
 			editDeleteSuggestion();
 			break;
 		case 10:
-			System.out.println("Placeholder to use CSV service");
+			generateReport();
 			break;
 		}
 		return false;
@@ -321,5 +322,13 @@ public class CCMController extends UserController {
 			else
 				System.out.println("No such suggestion or cannot delete.");
 		}
+	}
+	
+	private static void generateReport()
+	{
+		Integer camp = ((Student)AuthStore.getCurUser()).getCommittee();
+		ArrayList<Integer> camps = new ArrayList<>();
+		camps.add(camp);
+		FileService.generateCsvFromCamp(sc, camps);
 	}
 }
