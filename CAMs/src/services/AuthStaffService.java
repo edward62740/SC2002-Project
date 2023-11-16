@@ -2,10 +2,14 @@ package services;
 
 import java.util.HashMap;
 
+import interfaces.IAuthService;
 import models.Staff;
-import models.Student;
 import stores.*;
 
+
+/**
+ * The {@link AuthStaffService} extends {@link AuthService}, and provides log in functionality for staff.
+ */
 public class AuthStaffService extends AuthService {
 
 	@Override

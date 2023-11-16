@@ -14,6 +14,9 @@ import models.Student;
 import stores.AuthStore;
 import stores.DataStore;
 
+/**
+ * The {@link SuggestionRequestService} implements {@link IRequestService}, and provides request related functionalities for suggestions.
+ */
 public class SuggestionRequestService implements IRequestService {
 	public boolean createNewRequest(String content, Integer campId)
 	{

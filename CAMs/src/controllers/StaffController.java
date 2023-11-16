@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-
 import java.util.AbstractMap.SimpleEntry;
 
 import services.AuthStudentService;
@@ -26,6 +25,8 @@ import views.RequestView;
 import enums.RequestStatus;
 import enums.UserGroup;
 import interfaces.ICampStaffService;
+import interfaces.ICampStudentService;
+import interfaces.IRequestService;
 import models.Camp;
 import models.EnquiryRequest;
 import models.SuggestionRequest;
@@ -34,24 +35,49 @@ import models.Student;
 import models.Staff;
 import enums.UserGroup;
 
+/**
+ * The {@link StaffController} class handles user interactions for the Staff. It
+ * is responsible for application level tasks. It utilizes services
+ * {@link ICampStaffService} and
+ * {@link SuggestionRequestService},{@link EnquiryRequestService} to perform
+ * lower level tasks for camp and requests respectively. It extends
+ * {@link UserController}.
+ */
 public class StaffController extends UserController {
 
+	/**
+	 * Max attempts for {@link InputParser}.
+	 */
 	private static final int INPUT_MAX_ATTEMPTS = 1;
-	//private static ICampStudentService campStudentService = new CampStudentService();
+	/**
+	 * Instance of {@link EnquiryRequestService}. Provides lower-level logic for
+	 * handling enquires.
+	 */
 	private static EnquiryRequestService enquiryService = new EnquiryRequestService();
+	/**
+	 * Instance of {@link SuggestionRequestService}. Provides lower-level logic for
+	 * handling suggestions.
+	 */
 	private static SuggestionRequestService suggestionService = new SuggestionRequestService();
 
+	/**
+	 * Instance of {@link ICampStaffService}. Provides lower-level logic for
+	 * handling camp-related functionality for staff.
+	 */
 	private static ICampStaffService campStaffService = new CampStaffService();
 
-	static Scanner sc = new Scanner(System.in);
-
+	/**
+	 * Runs the controller to take in user input and act accordingly.
+	 * 
+	 * @return true to signal to calling function to exit, false otherwise.
+	 */
 	public static boolean run() {
 		Integer c = 0;
 
 		do {
 			System.out.println("\033[1;35m--- STAFF MENU ---\033[0m");
 			if (AuthStore.getCurUser().isDefaultPassword())
-			    System.out.println("\033[1;31mWarning! You are using the default password.\033[0m");
+				System.out.println("\033[1;31mWarning! You are using the default password.\033[0m");
 			System.out.println("\033[1mSelect option:\033[0m");
 			System.out.println("\033[1;36m0. Exit");
 			System.out.println("1. Create Camp");
@@ -109,6 +135,10 @@ public class StaffController extends UserController {
 
 	}
 
+	/**
+	 * Creates a new camp based on user inputs, and adds it to the
+	 * {@link DataStore}.
+	 */
 	public static void createCamp() {
 
 		String c_name = null, c_location = null, c_staff = null, c_description = null;
@@ -136,7 +166,7 @@ public class StaffController extends UserController {
 				System.out.println("Invalid user group. ");
 		} while (c_userGroup == null);
 
-		//System.out.println("Enter location: ");
+		// System.out.println("Enter location: ");
 		c_location = utils.InputParser.parseInString(sc, "Enter location", 0, "C");
 
 		do {
@@ -158,15 +188,12 @@ public class StaffController extends UserController {
 
 		} while (c_description == null);
 
-
-		
-
 		do {
 			c_closingDate = utils.InputParser.parseInLocalDateTime(sc,
 					"Please enter a valid closing date and time in the format yyyy-MM-dd HH:mm.", 0, "C");
 		} while (c_closingDate == null);
 		// set new description
-	
+
 		System.out.println("Please enter a valid date and time in the format yyyy-MM-dd HH:mm");
 		LocalDateTime dt1 = null;
 		LocalDateTime dt2 = null;
@@ -183,11 +210,16 @@ public class StaffController extends UserController {
 		}
 
 		c_dates = new SimpleEntry<>(dt1, dt2);
-		
-		campStaffService.createACamp(c_name, c_userGroup, c_location, c_totalSlots, c_ccmSlot, c_staff, c_description, c_closingDate, c_dates);
+
+		campStaffService.createACamp(c_name, c_userGroup, c_location, c_totalSlots, c_ccmSlot, c_staff, c_description,
+				c_closingDate, c_dates);
 		System.out.println("Camp succesfully created!");
 	}
 
+	/**
+	 * Edits a camp based on ID, that is owned by the current user stored in
+	 * {@link AuthStore}.
+	 */
 	public static void editCamp() {
 		Integer id = null;
 		do {
@@ -207,18 +239,21 @@ public class StaffController extends UserController {
 			System.out.println("3. Camp description");
 			System.out.println("4. Camp (registration) closing date");
 			System.out.println("5. Camp dates");
-			
+
 			choice = utils.InputParser.parseInInteger(sc, "", 0, 5, INPUT_MAX_ATTEMPTS, "C");
 		} while (choice == null);
 		if (campStaffService.editACamp(id, choice)) {
 			System.out.println("Camp successfully edited.");
-		}
-		else {
+		} else {
 			System.out.println("Camp failed to be edited");
 
 		}
 	}
 
+	/**
+	 * Deletes a camp based on ID, that is owned by the current user stored in
+	 * {@link AuthStore}.
+	 */
 	public static void deleteCamp() {
 		Integer id = null;
 		do {
@@ -234,7 +269,10 @@ public class StaffController extends UserController {
 		else
 			System.out.println("Operation failed. ");
 	}
-	
+
+	/**
+	 * Prints out the list of available camps based on the selected UserGroup
+	 */
 	private static void viewOpenCamps() {
 		String input = "";
 		UserGroup userGroup = null;
@@ -258,7 +296,11 @@ public class StaffController extends UserController {
 		if (camps.size() == 0)
 			System.out.println("There are no available camps. Modify your search or try again later. ");
 	}
-	
+
+	/**
+	 * Prints out the list of camps that are owned by the current user stored in
+	 * {@link AuthStore}.
+	 */
 	public static void viewOwnedCamps() {
 		ArrayList<Camp> camps = campStaffService.getOwnedCamps();
 		for (Camp i : camps) {
@@ -269,6 +311,10 @@ public class StaffController extends UserController {
 
 	}
 
+	/**
+	 * Provides functionality to list or reply to suggestions by CCMs on the camp
+	 * the user stored in {@link AuthStore} is staff of.
+	 */
 	private static void viewReplySuggestions() {
 		Integer sel = null;
 		String input = null;
@@ -279,9 +325,8 @@ public class StaffController extends UserController {
 		} while (sel == null);
 
 		ArrayList<SuggestionRequest> req = ((Staff) AuthStore.getCurUser()).getOwnedCamps().stream()
-		        .map(suggestionService::getRequestByCamp)
-		        .flatMap(List::stream)
-		        .collect(Collectors.toCollection(ArrayList::new));
+				.map(suggestionService::getRequestByCamp).flatMap(List::stream)
+				.collect(Collectors.toCollection(ArrayList::new));
 		for (int i = 0; i < req.size(); i++) {
 			System.out.print("Index: " + i);
 			RequestView.printReq(req.get(i));
@@ -309,12 +354,13 @@ public class StaffController extends UserController {
 				}
 				input = null;
 				do {
-					input = utils.InputParser.parseInString(sc, "Enter Y to approve and N to reject. ", INPUT_MAX_ATTEMPTS,
-							"C");
+					input = utils.InputParser.parseInString(sc, "Enter Y to approve and N to reject. ",
+							INPUT_MAX_ATTEMPTS, "C");
 					input.strip();
 				} while (!input.equals("Y") && !input.equals("N"));
 				boolean approve = false;
-				if(input.equals("Y")) approve = true;
+				if (input.equals("Y"))
+					approve = true;
 				if (suggestionService.handleRequest(req.get(sel), approve))
 					System.out.println("Response successful");
 				else
@@ -325,6 +371,10 @@ public class StaffController extends UserController {
 		}
 	}
 
+	/**
+	 * Provides functionality to list or reply to enquires by students on the camp
+	 * the user stored in {@link AuthStore} is staff of.
+	 */
 	private static void viewReplyEnquiry() {
 		Integer sel = null;
 		String input = null;
@@ -335,9 +385,8 @@ public class StaffController extends UserController {
 		} while (sel == null);
 
 		ArrayList<EnquiryRequest> req = ((Staff) AuthStore.getCurUser()).getOwnedCamps().stream()
-		        .map(enquiryService::getRequestByCamp)
-		        .flatMap(List::stream)
-		        .collect(Collectors.toCollection(ArrayList::new));
+				.map(enquiryService::getRequestByCamp).flatMap(List::stream)
+				.collect(Collectors.toCollection(ArrayList::new));
 		for (int i = 0; i < req.size(); i++) {
 			System.out.print("Index: " + i);
 			RequestView.printReq(req.get(i));
@@ -378,31 +427,34 @@ public class StaffController extends UserController {
 		}
 	}
 
-	private static void generateReport()
-	{
-		ArrayList<Integer> camps = campStaffService.getOwnedCamps().stream()
-                .map(Camp::getCampId)
-                .collect(Collectors.toCollection(ArrayList::new));
-		if(camps.size() == 0) System.out.println("You have no camps to generate report for.");
+	/**
+	 * Generates a CSV file containing the info of the camps that the user stored in
+	 * {@link AuthStore} is staff of, with optional filters.
+	 */
+	private static void generateReport() {
+		ArrayList<Integer> camps = campStaffService.getOwnedCamps().stream().map(Camp::getCampId)
+				.collect(Collectors.toCollection(ArrayList::new));
+		if (camps.size() == 0)
+			System.out.println("You have no camps to generate report for.");
 		FileService.generateCsvFromCamp(sc, camps);
 	}
-	
-	private static void performanceCCM()
-	{
+
+	/**
+	 * Prints the list of CCMs associated with the camps that the user stored in
+	 * {@link AuthStore} is staff of, along with their points.
+	 */
+	private static void performanceCCM() {
 		ArrayList<Camp> camps = campStaffService.getOwnedCamps();
-		for(Camp c : camps)
-		{
+		for (Camp c : camps) {
 			ArrayList<String> s = c.getCommittee();
 			System.out.print("Camp " + c.getCampId() + " : " + c.getName() + "\n");
-			for(String s1 : s)
-			{
-				if(DataStore.getStudents().containsKey(s1)) 
-				{
+			for (String s1 : s) {
+				if (DataStore.getStudents().containsKey(s1)) {
 					Student student = DataStore.getStudents().get(s1);
-					System.out.print("CCM: " + student.getUserID() + ", points: " + student.getPoints());
-					
+					System.out.println("CCM: " + student.getUserID() + ", points: " + student.getPoints());
+
 				}
-					
+
 			}
 			System.out.print("\n\n");
 		}

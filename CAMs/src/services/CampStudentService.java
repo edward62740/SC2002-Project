@@ -1,23 +1,21 @@
 package services;
 
 import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDate;
-import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import enums.UserGroup;
 import enums.UserRole;
+import interfaces.ICampStaffService;
 import interfaces.ICampStudentService;
 import models.Camp;
 import models.Student;
 import stores.AuthStore;
 import stores.DataStore;
 
-/* review: downcasting here should be safe... since something else would have gone horribly wrong if authstore user
- * contains reference to wrong type or null while controller is running.
+/**
+ * The {@link CampStudentService} implements {@link ICampStudentService}, and provides camp related functionalities for staff.
  */
 public class CampStudentService implements ICampStudentService{
 	

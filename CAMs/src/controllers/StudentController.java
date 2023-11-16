@@ -5,9 +5,13 @@ import java.util.Scanner;
 
 import services.AuthStudentService;
 import services.CampStudentService;
+import interfaces.ICampStaffService;
 import interfaces.ICampStudentService;
+import interfaces.IRequestService;
 import services.EnquiryRequestService;
+import services.SuggestionRequestService;
 import stores.AuthStore;
+import utils.InputParser;
 import views.CampView;
 import views.RequestView;
 import enums.UserGroup;
@@ -15,13 +19,34 @@ import models.Camp;
 import models.EnquiryRequest;
 import models.Request;
 
+
+/**
+ * The {@link StudentController} class handles user interactions for the Students.
+ * It is responsible for application level tasks. It utilizes
+ * services {@link ICampStudentService} and {@link EnquiryRequestService} to perform
+ * lower level tasks for camp and requests respectively.
+ * It extends {@link UserController}.
+ */
 public class StudentController extends UserController {
 
-	private static ICampStudentService campStudentService = new CampStudentService();
+	/**
+	 * Max attempts for {@link InputParser}.
+	 */
+	private static final int INPUT_MAX_ATTEMPTS = 1;
+	/**
+	 * Instance of {@link EnquiryRequestService}. Provides lower-level logic for handling enquires.
+	 */
 	private static EnquiryRequestService enquiryService = new EnquiryRequestService();
 
-	private static final int INPUT_MAX_ATTEMPTS = 1;
+	/**
+	 * Instance of {@link ICampStudentService}. Provides lower-level logic for handling camp-related functionality for students.
+	 */
+	private static ICampStudentService campStudentService = new CampStudentService();
 
+	/**
+	 * Runs the controller to take in user input and act accordingly.
+	 * @return true to signal to calling function to exit, false otherwise.
+	 */
 	public static boolean run() {
 		Integer c = 0;
 
@@ -81,6 +106,9 @@ public class StudentController extends UserController {
 
 	}
 
+	/**
+	 * 
+	 */
 	private static void viewOpenCamps() {
 		String input = "";
 		UserGroup userGroup = null;
@@ -105,6 +133,9 @@ public class StudentController extends UserController {
 			System.out.println("There are no available camps. Modify your search or try again later. ");
 	}
 
+	/**
+	 * 
+	 */
 	private static void viewRegisteredCamps() {
 		ArrayList<Camp> camps = campStudentService.getRegisteredCamps();
 		for (Camp i : camps) {
@@ -117,6 +148,9 @@ public class StudentController extends UserController {
 			System.out.println("You are not registered for any camps. ");
 	}
 
+	/**
+	 * 
+	 */
 	private static void registerForCamp() {
 		Integer id = null;
 		do {
@@ -154,6 +188,9 @@ public class StudentController extends UserController {
 			System.out.println("Camp ID does not exist.");
 	}
 
+	/**
+	 * 
+	 */
 	private static void registerForCommittee() {
 		Integer id = null;
 		do {
@@ -195,6 +232,9 @@ public class StudentController extends UserController {
 			System.out.println("Camp ID does not exist.");
 	}
 
+	/**
+	 * 
+	 */
 	private static void deregisterCamp() {
 		Integer id = null;
 		do {
@@ -224,6 +264,9 @@ public class StudentController extends UserController {
 			System.out.println("You are not registered to this camp or does not exist.");
 	}
 
+	/**
+	 * 
+	 */
 	private static void submitEnquiry() {
 		String input = null;
 		Integer id = null;
@@ -250,6 +293,9 @@ public class StudentController extends UserController {
 		System.out.println("Operation successful.");
 	}
 
+	/**
+	 * 
+	 */
 	private static void viewEnquiry() {
 		ArrayList<EnquiryRequest> req = enquiryService.getRequestByUser(AuthStore.getCurUser().getUserID());
 		for (Request r : req) {
@@ -260,6 +306,9 @@ public class StudentController extends UserController {
 
 	}
 
+	/**
+	 * 
+	 */
 	private static void editDeleteEnquiry() {
 		String input = null;
 		Integer id = null;

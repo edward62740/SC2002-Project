@@ -2,16 +2,13 @@ package services;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Scanner;
 
 import enums.UserGroup;
 import models.Student;
@@ -20,124 +17,149 @@ import models.Staff;
 import stores.DataStore;
 import utils.InputParser;
 
+/**
+ * The {@link FileService}s class provides methods for reading user data from CSV files and generating CSV files from Camp objects.
+ */
 public class FileService {
 
-	public static void readUserFromCsv() throws FileNotFoundException {
+    /**
+     * Reads user data from CSV files and populates the DataStore with Student and Staff objects.
+     *
+     * @throws FileNotFoundException If the specified CSV file is not found.
+     */
+    public static void readUserFromCsv() throws FileNotFoundException {
+        String workspacePath = System.getProperty("user.dir");
 
-		String workspacePath = System.getProperty("user.dir");
+        // Read Student data
+        File studentFile = new File(workspacePath + "/storage/student_list.csv");
+        Scanner studentScanner = new Scanner(studentFile);
 
-		File file = new File(workspacePath + "/storage/student_list.csv");
-		Scanner scanner = new Scanner(file);
+        while (studentScanner.hasNextLine()) {
+            String line = studentScanner.nextLine();
+            String[] columns = line.split(",");
+            String id = extractId(columns[1]);
+            String fac = columns[2].trim();
 
-		while (scanner.hasNextLine()) {
-			String line = scanner.nextLine();
-			// Split the line into columns using comma as the delimiter
-			String[] columns = line.split(",");
+            UserGroup userGroup = null;
+            for (UserGroup u : UserGroup.values()) {
+                if (fac.strip().equals(u.toString())) {
+                    userGroup = u;
+                }
+            }
 
-			// Extract id and fac from the columns
-			String id = extractId(columns[1]);
-			String fac = columns[2].trim(); // Assuming fac is in the third column
+            if (userGroup == null) {
+                System.out.println("Failed: " + id);
+                return;
+            }
 
-			UserGroup userGroup = null;
-			// Create a new Student object
-			for (UserGroup u : UserGroup.values())
-				if (fac.strip().equals(u.toString())) {
-					userGroup = u;
-				}
-			if (userGroup == null) {
-				System.out.println("Failed: " + id);
-				return;
-			}
-			Student student = new Student(id, userGroup);
-			DataStore.getStudents().put(id, student);
-			System.out.println("Loaded user: " + id);
-		}
+            Student student = new Student(id, userGroup);
+            DataStore.getStudents().put(id, student);
+            System.out.println("Loaded user: " + id);
+        }
 
-		file = new File(workspacePath + "/storage/staff_list.csv");
-		scanner = new Scanner(file);
+        // Read Staff data
+        File staffFile = new File(workspacePath + "/storage/staff_list.csv");
+        Scanner staffScanner = new Scanner(staffFile);
 
-		while (scanner.hasNextLine()) {
-			String line = scanner.nextLine();
-			// Split the line into columns using comma as the delimiter
-			String[] columns = line.split(",");
+        while (staffScanner.hasNextLine()) {
+            String line = staffScanner.nextLine();
+            String[] columns = line.split(",");
+            String id = extractId(columns[1]);
+            String fac = columns[2].trim();
 
-			// Extract id and fac from the columns
-			String id = extractId(columns[1]);
-			String fac = columns[2].trim(); // Assuming fac is in the third column
+            UserGroup userGroup = null;
+            for (UserGroup u : UserGroup.values()) {
+                if (fac.strip().equals(u.toString())) {
+                    userGroup = u;
+                }
+            }
 
-			UserGroup userGroup = null;
-			// Create a new Student object
-			for (UserGroup u : UserGroup.values())
-				if (fac.strip().equals(u.toString())) {
-					userGroup = u;
-				}
-			if (userGroup == null) {
-				System.out.println("Failed: " + id);
-				return;
-			}
-			Staff staff = new Staff(id, userGroup);
-			DataStore.getStaff().put(id, staff);
-			System.out.println("Loaded user: " + id);
-		}
+            if (userGroup == null) {
+                System.out.println("Failed: " + id);
+                return;
+            }
 
-		// Close the scanner
-		scanner.close();
-	}
-	
-	public static void generateCsvFromCamp(Scanner sc, ArrayList<Integer> camps)
-	{
-		ArrayList<String> col = generateCsvHeader();
-		System.out.println();
-		Integer in = null;
-		do {
-		    int index = 0;
-		    System.out.println("Columns to be printed: ");
-		    for (String e : col) {
-		        System.out.println(index++ + ": " + e);
-		    }
-		    in = InputParser.parseInInteger(sc, "Enter index to remove inclusion or -1 to continue generation.", -1, col.size(), 0, null);
-		    if(in != null && in > -1 && in < col.size()) col.remove(in.intValue());
-		} while (in == null || in != -1);
-	
-		boolean headers = true;
-		// Specify the file path where you want to save the serialized object
-		String filePath = System.getProperty("user.dir") + "/storage/out.csv";
+            Staff staff = new Staff(id, userGroup);
+            DataStore.getStaff().put(id, staff);
+            System.out.println("Loaded user: " + id);
+        }
 
-		try (FileWriter csvWriter = new FileWriter(filePath)) {
-		    for (Integer camp : camps) {
-		        if (DataStore.getCamps().containsKey(camp)) {
-		            Camp c = DataStore.getCamps().get(camp);
-		            csvWriter.write(campToCsv(c, headers, col));
-		            headers = false;
+        // Close the scanners
+        studentScanner.close();
+        staffScanner.close();
+    }
 
-		            // Add a newline character after each camp's data
-		            csvWriter.write("\n");
+    /**
+     * Generates a CSV file from Camp objects, allowing customization of columns to include.
+     *
+     * @param sc    The Scanner object for user input.
+     * @param camps The list of camp IDs to generate CSV from.
+     */
+    public static void generateCsvFromCamp(Scanner sc, ArrayList<Integer> camps) {
+        ArrayList<String> col = generateCsvHeader();
+        System.out.println();
+        Integer in = null;
 
-		            System.out.println("Camp " + camp + " written to CSV successfully.");
-		        }
-		    }
-		} catch (IOException e) {
-		    e.printStackTrace();
-		}
-	}
+        do {
+            int index = 0;
+            System.out.println("Columns to be printed: ");
+            for (String e : col) {
+                System.out.println(index++ + ": " + e);
+            }
+            in = InputParser.parseInInteger(sc, "Enter index to remove inclusion or -1 to continue generation.", -1, col.size(), 0, null);
+            if (in != null && in > -1 && in < col.size()) col.remove(in.intValue());
+        } while (in == null || in != -1);
 
-	private static String extractId(String email) {
-		// Assuming the id is the substring before the "@" symbol in the email
-		int atIndex = email.indexOf("@");
-		if (atIndex != -1) {
-			return email.substring(0, atIndex);
-		}
-		return email;
-	}
+        boolean headers = true;
+        // Specify the file path where you want to save the serialized object
+        String filePath = System.getProperty("user.dir") + "/storage/out.csv";
 
-	
-    public static String campToCsv(Camp camp, boolean includeHeaders,  ArrayList<String> columns) {
+        try (FileWriter csvWriter = new FileWriter(filePath)) {
+            for (Integer camp : camps) {
+                if (DataStore.getCamps().containsKey(camp)) {
+                    Camp c = DataStore.getCamps().get(camp);
+                    csvWriter.write(campToCsv(c, headers, col));
+                    headers = false;
+
+                    // Add a newline character after each camp's data
+                    csvWriter.write("\n");
+
+                    System.out.println("Camp " + camp + " written to CSV successfully.");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Extracts the user ID from an email address.
+     *
+     * @param email The email address to extract the user ID from.
+     * @return The extracted user ID.
+     */
+    private static String extractId(String email) {
+        int atIndex = email.indexOf("@");
+        if (atIndex != -1) {
+            return email.substring(0, atIndex);
+        }
+        return email;
+    }
+
+    /**
+     * Converts a Camp object to a CSV-formatted string with customizable columns.
+     *
+     * @param camp           The Camp object to convert.
+     * @param includeHeaders Flag indicating whether to include column headers in the CSV.
+     * @param columns        The list of columns to include in the CSV.
+     * @return The CSV-formatted string representing the Camp object.
+     */
+    public static String campToCsv(Camp camp, boolean includeHeaders, ArrayList<String> columns) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         StringBuilder csvBuilder = new StringBuilder();
- 
+
         if (includeHeaders) {
-           
             csvBuilder.append(String.join(",", columns)).append("\n");
         }
 
@@ -159,12 +181,16 @@ public class FileService {
         if (columns.contains("List of Students")) csvBuilder.append(String.join(";", (camp.getRegisteredStudents()))).append(",");
         if (columns.contains("Description")) csvBuilder.append(escapeCsvField(camp.getDescription())).append(",");
 
-
         return csvBuilder.toString();
     }
 
+    /**
+     * Generates a list of column headers for the CSV file.
+     *
+     * @return The list of column headers.
+     */
     public static ArrayList<String> generateCsvHeader() {
-    	ArrayList<String> headers = new ArrayList<>();
+        ArrayList<String> headers = new ArrayList<>();
         headers.add("Camp ID");
         headers.add("Name");
         headers.add("Date");
@@ -181,6 +207,13 @@ public class FileService {
 
         return headers;
     }
+
+    /**
+     * Formats a list of date ranges into a string for CSV output.
+     *
+     * @param dateList The list of date ranges.
+     * @return The formatted string.
+     */
     private static String formatDates(ArrayList<SimpleEntry<LocalDateTime, LocalDateTime>> dateList) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         StringBuilder datesBuilder = new StringBuilder();
@@ -192,9 +225,14 @@ public class FileService {
 
         return datesBuilder.toString();
     }
+
+    /**
+     * Escapes a CSV field to handle null values and fields containing commas.
+     *
+     * @param field The field to escape.
+     * @return The escaped CSV field.
+     */
     private static String escapeCsvField(String field) {
-        // Handle null values and fields containing commas
         return (field != null && field.contains(",")) ? "\"" + field + "\"" : field;
     }
-
 }

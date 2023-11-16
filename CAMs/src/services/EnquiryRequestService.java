@@ -6,6 +6,7 @@ import java.util.AbstractMap.SimpleEntry;
 
 import enums.RequestStatus;
 import enums.UserRole;
+import interfaces.ICampStudentService;
 import interfaces.IRequestService;
 import models.EnquiryRequest;
 import models.Request;
@@ -14,6 +15,9 @@ import models.User;
 import stores.AuthStore;
 import stores.DataStore;
 
+/**
+ * The {@link EnquiryRequestService} implements {@link IRequestService}, and provides request related functionalities for enquires.
+ */
 public class EnquiryRequestService implements IRequestService {
 	public boolean createNewRequest(String content, Integer campId)
 	{

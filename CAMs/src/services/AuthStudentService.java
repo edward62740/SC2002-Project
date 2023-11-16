@@ -5,6 +5,9 @@ import java.util.HashMap;
 import models.Student;
 import stores.*;
 
+/**
+ * The {@link AuthStudentService} extends {@link AuthService}, and provides log in functionality for staff.
+ */
 public class AuthStudentService extends AuthService {
 
 	@Override

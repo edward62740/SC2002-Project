@@ -5,8 +5,16 @@ import enums.RequestStatus;
 import models.EnquiryRequest;
 import models.Request;
 
+/**
+ * The {@link RequestView} provides functions to print out the content of a request to CLI.
+ */
 public class RequestView {
+
 	private RequestView() {};
+	/**
+	 * Prints the content of a given {@link Request}.
+	 * @param req the request to print
+	 */
 	public static void printReq(Request req) {
 		
 		System.out.println("--------------------------------------");

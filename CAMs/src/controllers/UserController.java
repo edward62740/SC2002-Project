@@ -4,10 +4,21 @@ import java.util.Scanner;
 
 import stores.AuthStore;
 
+/**
+ * The {@link UserController} class provides a way to change password. It is
+ * also the base class for the specific user controllers.
+ */
 public class UserController {
 
+	
+	/**
+	 * Instance of {@link Scanner}. Used to read input from user.
+	 */
 	protected static final Scanner sc = new Scanner(System.in);
 
+	/**
+	 * @return true if success false otherwise.
+	 */
 	protected static boolean updatePassword() {
 		String input1 = null, input2 = null;
 		do {

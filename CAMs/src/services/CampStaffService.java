@@ -12,12 +12,14 @@ import enums.UserRole;
 import interfaces.ICampStaffService;
 import models.Camp;
 
-import models.Student;
 import models.Staff;
 import stores.AuthStore;
 import stores.DataStore;
 import views.CampView;
 
+/**
+ * The {@link CampStaffService} implements {@link ICampStaffService}, and provides camp related functionalities for staff.
+ */
 public class CampStaffService implements ICampStaffService {
 	static Scanner sc = new Scanner(System.in);
 
@@ -119,6 +121,7 @@ public class CampStaffService implements ICampStaffService {
 				if(DataStore.getStudents().get(s) != null)
 				{
 					DataStore.getStudents().get(s).setRole(UserRole.STUDENT);
+					DataStore.getStudents().get(s).setPoints(0); //rst points
 				}
 			}
 			camps.remove(id);

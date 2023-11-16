@@ -1,9 +1,15 @@
 package services;
 
+import interfaces.IAuthService;
+import interfaces.ICampStaffService;
 import models.User;
 import stores.AuthStore;
 
-public abstract class AuthService {
+
+/**
+ * The {@link AuthService} implements {@link IAuthService}, and is an abstract class that also provides functionality to verify password.
+ */
+public abstract class AuthService implements IAuthService{
 
 	public abstract boolean login(String uid, String password);
 

@@ -9,11 +9,22 @@ import enums.UserRole;
 import models.Camp;
 import models.User;
 
+/**
+ * The {@link CampView} class provides methods for printing camps and its attributes to CLI.
+ */
 public class CampView {
     private CampView() {}
 
+    /**
+     * DateTime formatter for printing date
+     */
     static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
+    /**
+     * Formats and prints camp information based on its reference and subject to the {@link UserRole}.
+     * @param camp the camp to print
+     * @param user which user is viewing the information
+     */
     public static void printCamp(Camp camp, User user) {
         System.out.println("\033[1;34m--------------------------------------\033[0m");
         System.out.println("\033[1;36mCamp name:\033[0m " + camp.getName());
@@ -41,12 +52,21 @@ public class CampView {
         System.out.println("\033[1;34m--------------------------------------\033[0m");
     }
 
+    /**
+     * Formats and prints the position of a given user for a given camp.
+     * @param camp the camp to check
+     * @param user the user to check
+     */
     public static void printPosition(Camp camp, User user) {
         if (camp.getCommittee().contains(user.getUserID())) System.out.println("\033[1;36mPosition:\033[0m Committee");
         else if (camp.getRegisteredStudents().contains(user.getUserID())) System.out.println("\033[1;36mPosition:\033[0m Member");
         else System.out.println("\033[1;36mPosition:\033[0m None");
     }
 
+    /**
+     * Formats and prints a date array from {@link Camp}.
+     * @param camp the camp to print dates from
+     */
     public static void printDateArray(Camp camp) {
         if (camp.getDates() != null) {
             IntStream.range(0, camp.getDates().size())
