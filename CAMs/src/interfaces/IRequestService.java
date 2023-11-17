@@ -16,6 +16,9 @@ import stores.DataStore;
  * The {@link IRequestService} interface defines a contract for
  * managing requests.
  */
+/**
+ * 
+ */
 public interface IRequestService {
 	
 	/**
@@ -63,5 +66,16 @@ public interface IRequestService {
 	 * @return {@link ArrayList} of {@link Request}
 	 */
 	public ArrayList<? extends Request> getRequestByUser(String uId);
+	
+	
+	/**
+	 * Responds to a given request.
+	 * @param req the {@link Request} to respond to 
+	 * @param v flag to approve or not, if applicable
+	 * @param str the response to give, if applicable
+	 * @return
+	 */
+	public boolean handleRequest(Request req, boolean v, String str);
+	
 
 }

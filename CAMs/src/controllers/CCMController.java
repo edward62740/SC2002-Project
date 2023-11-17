@@ -41,15 +41,15 @@ public class CCMController extends UserController {
 	 */
 	private static final int INPUT_MAX_ATTEMPTS = 1;
 	/**
-	 * Instance of {@link EnquiryRequestService}. Provides lower-level logic for
+	 * Instance of {@link IRequestService}. Provides lower-level logic for
 	 * handling enquires.
 	 */
-	private static EnquiryRequestService enquiryService = new EnquiryRequestService();
+	private static IRequestService enquiryService = new EnquiryRequestService();
 	/**
-	 * Instance of {@link SuggestionRequestService}. Provides lower-level logic for
+	 * Instance of {@link IRequestService}. Provides lower-level logic for
 	 * handling suggestions.
 	 */
-	private static SuggestionRequestService suggestionService = new SuggestionRequestService();
+	private static IRequestService suggestionService = new SuggestionRequestService();
 
 	/**
 	 * Instance of {@link ICampStudentService}. Provides lower-level logic for
@@ -261,7 +261,7 @@ public class CCMController extends UserController {
 					INPUT_MAX_ATTEMPTS, "C");
 		} while (sel == null);
 
-		ArrayList<EnquiryRequest> req = enquiryService
+		ArrayList<? extends Request> req = enquiryService
 				.getRequestByCamp(((Student) AuthStore.getCurUser()).getCommittee());
 		for (int i = 0; i < req.size(); i++) {
 			System.out.print("Index: " + i);
@@ -293,7 +293,7 @@ public class CCMController extends UserController {
 					utils.InputParser.parseInString(sc, "Enter the response. Enter 'C' to cancel.", INPUT_MAX_ATTEMPTS,
 							"C");
 				} while (input == null);
-				if (enquiryService.handleRequest(req.get(sel), input))
+				if (enquiryService.handleRequest(req.get(sel), true, input))
 					System.out.println("Response successful");
 				else
 					System.out.println("Unknown error");
@@ -308,7 +308,7 @@ public class CCMController extends UserController {
 	 * submitted as a committee member.
 	 */
 	private static void viewSuggestion() {
-		ArrayList<SuggestionRequest> req = suggestionService.getRequestByUser(AuthStore.getCurUser().getUserID());
+		ArrayList<? extends Request> req = suggestionService.getRequestByUser(AuthStore.getCurUser().getUserID());
 		for (Request r : req) {
 			RequestView.printReq(r);
 		}

@@ -34,9 +34,9 @@ public class StudentController extends UserController {
 	 */
 	private static final int INPUT_MAX_ATTEMPTS = 1;
 	/**
-	 * Instance of {@link EnquiryRequestService}. Provides lower-level logic for handling enquires.
+	 * Instance of {@link IRequestService}. Provides lower-level logic for handling enquires.
 	 */
-	private static EnquiryRequestService enquiryService = new EnquiryRequestService();
+	private static IRequestService enquiryService = new EnquiryRequestService();
 
 	/**
 	 * Instance of {@link ICampStudentService}. Provides lower-level logic for handling camp-related functionality for students.
@@ -297,7 +297,7 @@ public class StudentController extends UserController {
 	 * 
 	 */
 	private static void viewEnquiry() {
-		ArrayList<EnquiryRequest> req = enquiryService.getRequestByUser(AuthStore.getCurUser().getUserID());
+		ArrayList<? extends Request> req = enquiryService.getRequestByUser(AuthStore.getCurUser().getUserID());
 		for (Request r : req) {
 			RequestView.printReq(r);
 		}

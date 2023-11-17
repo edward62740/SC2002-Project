@@ -103,11 +103,11 @@ public class EnquiryRequestService implements IRequestService {
         return matchingRequests;
 	}
 	
-	public boolean handleRequest(Request req, String v) {
+	public boolean handleRequest(Request req, boolean v, String str) {
 		if(req != null)
 		{
 			req.setResponderID(AuthStore.getCurUser().getUserID());
-			req.setResponse(v);
+			req.setResponse(str);
 			req.setStatus(RequestStatus.REPLIED);
 			if(AuthStore.getCurUser().getRole() == UserRole.CCM)
 			{

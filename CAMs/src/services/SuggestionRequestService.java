@@ -103,7 +103,7 @@ public class SuggestionRequestService implements IRequestService {
 	}
 
 
-	public boolean handleRequest(Request req, boolean v) {
+	public boolean handleRequest(Request req, boolean v, String str) {
 		if(req != null)
 		{
 			req.setResponderID(AuthStore.getCurUser().getUserID());

@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -50,15 +51,15 @@ public class StaffController extends UserController {
 	 */
 	private static final int INPUT_MAX_ATTEMPTS = 1;
 	/**
-	 * Instance of {@link EnquiryRequestService}. Provides lower-level logic for
+	 * Instance of {@link IRequestService}. Provides lower-level logic for
 	 * handling enquires.
 	 */
-	private static EnquiryRequestService enquiryService = new EnquiryRequestService();
+	private static IRequestService enquiryService = new EnquiryRequestService();
 	/**
-	 * Instance of {@link SuggestionRequestService}. Provides lower-level logic for
+	 * Instance of {@link IRequestService}. Provides lower-level logic for
 	 * handling suggestions.
 	 */
-	private static SuggestionRequestService suggestionService = new SuggestionRequestService();
+	private static IRequestService suggestionService = new SuggestionRequestService();
 
 	/**
 	 * Instance of {@link ICampStaffService}. Provides lower-level logic for
@@ -324,7 +325,7 @@ public class StaffController extends UserController {
 					INPUT_MAX_ATTEMPTS, "C");
 		} while (sel == null);
 
-		ArrayList<SuggestionRequest> req = ((Staff) AuthStore.getCurUser()).getOwnedCamps().stream()
+		ArrayList<? extends Request> req = ((Staff) AuthStore.getCurUser()).getOwnedCamps().stream()
 				.map(suggestionService::getRequestByCamp).flatMap(List::stream)
 				.collect(Collectors.toCollection(ArrayList::new));
 		for (int i = 0; i < req.size(); i++) {
@@ -361,7 +362,7 @@ public class StaffController extends UserController {
 				boolean approve = false;
 				if (input.equals("Y"))
 					approve = true;
-				if (suggestionService.handleRequest(req.get(sel), approve))
+				if (suggestionService.handleRequest(req.get(sel), approve, ""))
 					System.out.println("Response successful");
 				else
 					System.out.println("Unknown error");
@@ -384,7 +385,7 @@ public class StaffController extends UserController {
 					INPUT_MAX_ATTEMPTS, "C");
 		} while (sel == null);
 
-		ArrayList<EnquiryRequest> req = ((Staff) AuthStore.getCurUser()).getOwnedCamps().stream()
+		ArrayList<? extends Request> req = ((Staff) AuthStore.getCurUser()).getOwnedCamps().stream()
 				.map(enquiryService::getRequestByCamp).flatMap(List::stream)
 				.collect(Collectors.toCollection(ArrayList::new));
 		for (int i = 0; i < req.size(); i++) {
@@ -414,10 +415,10 @@ public class StaffController extends UserController {
 				}
 				input = "";
 				do {
-					utils.InputParser.parseInString(sc, "Enter the response. Enter 'C' to cancel.", INPUT_MAX_ATTEMPTS,
+					input = utils.InputParser.parseInString(sc, "Enter the response. Enter 'C' to cancel.", INPUT_MAX_ATTEMPTS,
 							"C");
 				} while (input == null);
-				if (enquiryService.handleRequest(req.get(sel), input))
+				if (enquiryService.handleRequest(req.get(sel), true, input))
 					System.out.println("Response successful");
 				else
 					System.out.println("Unknown error");
