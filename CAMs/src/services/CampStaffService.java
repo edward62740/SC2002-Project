@@ -25,12 +25,13 @@ public class CampStaffService implements ICampStaffService {
 
 	public boolean createACamp(String name, UserGroup userGroup, String location, Integer totalSlots, Integer ccmSlots,
 			String staff, String description, LocalDateTime closingDate,
-			SimpleEntry<LocalDateTime, LocalDateTime> dates) {
+			SimpleEntry<LocalDateTime, LocalDateTime> dates, boolean visible) {
 
 		Integer campId = DataStore.getCampIndexCur();
 		Camp newcamp = new Camp(campId, name, userGroup, location, totalSlots, ccmSlots, staff, description,
 				closingDate);
 		newcamp.getDates().add(dates);
+		newcamp.setVisible(visible);
 		((Staff) AuthStore.getCurUser()).addOwnedCamps(campId);
 
 		DataStore.getCamps().put(campId, newcamp);
@@ -102,6 +103,19 @@ public class CampStaffService implements ICampStaffService {
 			// camp.setClosingDate(dt);
 
 			break;
+			
+		case 6:
+			Integer visible = null;
+			do {
+				visible = utils.InputParser.parseInInteger(sc,
+						"Enter '0' to set to invisible. Enter '1' to set to visible. Enter 'C' to cancel. ", 0, 1,
+						1, "C");
+			} while (visible == null);
+			if(visible == 1) camp.setVisible(true);
+			else if (visible == 0) camp.setVisible(false);
+			else return false;
+			return true;
+			
 
 		}
 		return true;

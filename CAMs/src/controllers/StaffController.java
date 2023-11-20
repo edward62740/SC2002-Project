@@ -209,11 +209,20 @@ public class StaffController extends UserController {
 			System.out.println("Starting date must be BEFORE ending date");
 			return;
 		}
-
+		Integer c_visible = null;
+		boolean visible = true;
+		do {
+			c_visible = utils.InputParser.parseInInteger(sc,
+					"Enter '0' to set to invisible. Enter '1' to set to visible. Enter 'C' to cancel. ", 0, 1,
+					1, "C");
+		} while (c_visible == null);
+		if(c_visible==0) visible = false;
+		else visible = true;
+		
 		c_dates = new SimpleEntry<>(dt1, dt2);
 
 		campStaffService.createACamp(c_name, c_userGroup, c_location, c_totalSlots, c_ccmSlot, c_staff, c_description,
-				c_closingDate, c_dates);
+				c_closingDate, c_dates, visible);
 		System.out.println("Camp succesfully created!");
 	}
 
@@ -240,8 +249,9 @@ public class StaffController extends UserController {
 			System.out.println("3. Camp description");
 			System.out.println("4. Camp (registration) closing date");
 			System.out.println("5. Camp dates");
+			System.out.println("6. Camp visibility");
 
-			choice = utils.InputParser.parseInInteger(sc, "", 0, 5, INPUT_MAX_ATTEMPTS, "C");
+			choice = utils.InputParser.parseInInteger(sc, "", 0, 6, INPUT_MAX_ATTEMPTS, "C");
 		} while (choice == null);
 		if (campStaffService.editACamp(id, choice)) {
 			System.out.println("Camp successfully edited.");
@@ -289,8 +299,16 @@ public class StaffController extends UserController {
 			if (userGroup == null)
 				System.out.println("Invalid user group. ");
 		} while (userGroup == null);
-
-		ArrayList<Camp> camps = campStaffService.getCamps(userGroup, false);
+		Integer c_visible = null;
+		boolean visible = true;
+		do {
+			c_visible = utils.InputParser.parseInInteger(sc,
+					"Enter '1' view invisible camps too. Otherwise enter '0'. Enter 'C' to cancel. ", 0, 1,
+					1, "C");
+		} while (c_visible == null);
+		if(c_visible==0) visible = false;
+		else visible = true;
+		ArrayList<Camp> camps = campStaffService.getCamps(userGroup, visible);
 		for (Camp i : camps) {
 			CampView.printCamp(i, AuthStore.getCurUser());
 		}

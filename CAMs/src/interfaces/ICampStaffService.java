@@ -22,11 +22,12 @@ public interface ICampStaffService {
 	 * @param description description of the camp
 	 * @param closingDate the {@link LocalDateTime} indicating the camp registration deadline
 	 * @param dates the list of {@link LocalDateTime} indicating the dates the camp runs on.
+	 * @param visible the visibility of camp
 	 * @return
 	 */
 	public boolean createACamp(String name, UserGroup userGroup, String location, Integer totalSlots, Integer ccmSlots,
 			String staff, String description, LocalDateTime closingDate,
-			SimpleEntry<LocalDateTime, LocalDateTime> dates);
+			SimpleEntry<LocalDateTime, LocalDateTime> dates, boolean visible);
 
 	/**
 	 * Edit a camp based on its ID and a choice of parameter.
