@@ -1,7 +1,7 @@
 package enums;
 
 /**
- * The {@link UserRole} enumeration represents different roles that a user can have.
+ * The {@link UserRole} enumeration represents different user role.
  * <ul>
  * <li>{@link #STUDENT}: The user has the role of a student.</li>
  * <li>{@link #STAFF}: The user has the role of a staff member.</li>

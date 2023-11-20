@@ -13,7 +13,7 @@ public class RequestView {
 	private RequestView() {};
 	/**
 	 * Prints the content of a given {@link Request}.
-	 * @param req the request to print
+	 * @param req the request to pri nt
 	 */
 	public static void printReq(Request req) {
 		

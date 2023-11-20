@@ -1,13 +1,12 @@
 package enums;
 
 /**
- * The {@link RequestStatus} enumeration represents the various states a request
- * can be in.
+ * The {@link RequestStatus} enumeration represents the various states of a request.
  * <ul>
  * <li>{@link #PENDING}: The request is pending and awaiting a response.</li>
  * <li>{@link #REPLIED}: The request has been replied to.</li>
  * <li>{@link #ACCEPTED}: The request has been accepted.</li>
- * <li>{@link #REJECTED}: The request has been rejected.</li>
+ * <li>{@link #REJECTED}: The request has been rejected</li>
  * </ul>
  */
 public enum RequestStatus {

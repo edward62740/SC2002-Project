@@ -13,6 +13,7 @@ import enums.UserGroup;
  * staff information, committee, registered students, and a description.
  * Each camp instance is uniquely identified by its camp ID, and the ID must
  * be aliased by an integer ID key for each instance in the data store.
+ * More info on reference to instances of Camp in {@link DataStore}.
  */
 public class Camp {
 
@@ -61,15 +62,15 @@ public class Camp {
     /**
      * Constructs a new {@link Camp} instance with the specified parameters.
      *
-     * @param campId       The integer ID referencing the camp.
-     * @param name         The name of the camp.
-     * @param userGroup    The user group this camp is open to.
-     * @param location     The location of the camp.
-     * @param totalSlots   The total slots of the camp.
-     * @param ccmSlots     The slots of the camp committee.
-     * @param staff        The user ID of staff.
-     * @param description  The description of the camp.
-     * @param closingDate  The closing date of the camp.
+     * @param campId       The integer ID referencing the camp
+     * @param name         The name of the camp
+     * @param userGroup    The user group this camp is open to
+     * @param location     The location of the camp
+     * @param totalSlots   The total slots of the camp
+     * @param ccmSlots     The slots of the camp committee
+     * @param staff        The user ID of staff
+     * @param description  The description of the camp
+     * @param closingDate  The closing date of the camp
      */
     public Camp(int campId, String name, UserGroup userGroup, String location,
                 int totalSlots, int ccmSlots, String staff, String description, LocalDateTime closingDate) {

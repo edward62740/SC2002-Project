@@ -25,7 +25,7 @@ import models.Request;
  * It is responsible for application level tasks. It utilizes
  * services {@link ICampStudentService} and {@link EnquiryRequestService} to perform
  * lower level tasks for camp and requests respectively.
- * It extends {@link UserController}.
+ * It extends  {@link UserController}.
  */
 public class StudentController extends UserController {
 
@@ -107,7 +107,7 @@ public class StudentController extends UserController {
 	}
 
 	/**
-	 * 
+	 * View list of open camps, filtered by faculty.
 	 */
 	private static void viewOpenCamps() {
 		String input = "";
@@ -134,7 +134,7 @@ public class StudentController extends UserController {
 	}
 
 	/**
-	 * 
+	 * View list of registered camps for the currently logged in user.
 	 */
 	private static void viewRegisteredCamps() {
 		ArrayList<Camp> camps = campStudentService.getRegisteredCamps();
@@ -149,7 +149,7 @@ public class StudentController extends UserController {
 	}
 
 	/**
-	 * 
+	 * Registers for camp.
 	 */
 	private static void registerForCamp() {
 		Integer id = null;
@@ -189,7 +189,7 @@ public class StudentController extends UserController {
 	}
 
 	/**
-	 * 
+	 * Registers for camp as CCM.
 	 */
 	private static void registerForCommittee() {
 		Integer id = null;
@@ -233,7 +233,7 @@ public class StudentController extends UserController {
 	}
 
 	/**
-	 * 
+	 * Attempts to deregister from a camp.
 	 */
 	private static void deregisterCamp() {
 		Integer id = null;
@@ -265,7 +265,7 @@ public class StudentController extends UserController {
 	}
 
 	/**
-	 * 
+	 * Submits an enquiry on a camp.
 	 */
 	private static void submitEnquiry() {
 		String input = null;
@@ -294,7 +294,7 @@ public class StudentController extends UserController {
 	}
 
 	/**
-	 * 
+	 * To view enquiry on a camp.
 	 */
 	private static void viewEnquiry() {
 		ArrayList<? extends Request> req = enquiryService.getRequestByUser(AuthStore.getCurUser().getUserID());
@@ -307,7 +307,7 @@ public class StudentController extends UserController {
 	}
 
 	/**
-	 * 
+	 * Edits or deletes enquiry on a camp.
 	 */
 	private static void editDeleteEnquiry() {
 		String input = null;

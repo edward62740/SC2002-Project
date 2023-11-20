@@ -6,11 +6,11 @@ import enums.UserRole;
 
 /**
  * The {@link User} class represents a user with attributes such as userID, password, faculty,
- * default password status, and role.
+ * default password status, and role etc.
  */
 public class User {
 
-    /* User id xxxx in email xxxx@ntu.edu.sg */
+    /* User id xxxx in email xxxx@[e.]ntu.edu.sg */
     private String userID;
 
     /* Password string, defaults to "password" */
@@ -35,7 +35,7 @@ public class User {
     public User(String uid, UserGroup faculty, UserRole role) {
         this.userID = uid;
         this.faculty = faculty;
-        this.password = "password";
+        this.password = "password"; // default PW
         this.isDefaultPassword = true;
         this.setRole(role);
     }

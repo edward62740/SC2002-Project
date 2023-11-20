@@ -16,6 +16,7 @@ public class RangeChecker<T> {
 
     /**
      * Constructs a {@link RangeChecker} with the specified comparator for comparing values of type {@code T}.
+     * The comparator is expected to provide method compare(T o1, T o2) and return positive, negative or zero integer.
      *
      * @param comparator The comparator for comparing values of type {@code T}.
      */
@@ -25,10 +26,15 @@ public class RangeChecker<T> {
 
     /**
      * Checks if a given value is within any of the specified ranges.
+     * 
+     * ranges --------   ---------            -------------
+     * 
+     * value to check           .
+     *                          ^ return true
      *
-     * @param value      The value to check against the ranges.
-     * @param rangeList  The list of ranges represented by {@link SimpleEntry} instances.
-     * @return true if the value is within any of the ranges, false  otherwise.
+     * @param value      The value to check against the ranges
+     * @param rangeList  The list of ranges represented by {@link SimpleEntry} instances
+     * @return true if the value is within any of the ranges, false  otherwise
      */
     public boolean isValueInRange(T value, ArrayList<SimpleEntry<T, T>> rangeList) {
         for (SimpleEntry<T, T> range : rangeList) {
@@ -44,10 +50,15 @@ public class RangeChecker<T> {
 
     /**
      * Checks if there is an intersection between two lists of ranges.
-     *
-     * @param rangeList1 The first list of ranges.
-     * @param rangeList2 The second list of ranges.
-     * @return true if there is an intersection between the two lists of ranges, false otherwise.
+     * 
+     * ranges1 --------   ---------            -------------
+     * 
+     * ranges2                  ---      ---------  ---
+     *                          ^return true
+     * 
+     * @param rangeList1 The first list of ranges
+     * @param rangeList2 The second list of ranges
+     * @return true if there is an intersection between the two lists of ranges, false otherwise
      */
     public boolean isIntersect(ArrayList<SimpleEntry<T, T>> rangeList1, ArrayList<SimpleEntry<T, T>> rangeList2) {
         for (SimpleEntry<T, T> range1 : rangeList1) {

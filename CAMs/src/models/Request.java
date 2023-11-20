@@ -46,7 +46,7 @@ public class Request {
 		this.requesterID = id;
 		this.setCampID(campId);
 		this.content = content;
-		this.status = RequestStatus.PENDING;
+		this.status = RequestStatus.PENDING; //common for all Request
 	}
 	/**
 	 * Gets the requester's ID.
@@ -69,7 +69,7 @@ public class Request {
 	/**
 	 * Gets the responder's ID.
 	 *
-	 * @return The responder's ID.
+	 * @return The responder's ID
 	 */
 	public String getResponderID() {
 	    return responderID;

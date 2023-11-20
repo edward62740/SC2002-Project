@@ -13,7 +13,7 @@ public abstract class AuthService implements IAuthService{
 
 	public abstract boolean login(String uid, String password);
 
-	public abstract boolean logout();
+	public abstract boolean logout(); // TODO implement
 
 	public boolean isAuth(User user, String password) {
 		if (user != null) {

@@ -80,7 +80,7 @@ public class EnquiryRequestService implements IRequestService {
 		HashMap<SimpleEntry<Integer,String>, EnquiryRequest> requests = DataStore.getEnquiries();
         ArrayList<EnquiryRequest> matchingRequests = new ArrayList<>();
 
-        for (SimpleEntry<Integer, String> key : requests.keySet()) {
+        for (SimpleEntry<Integer, String> key : requests.keySet()) { // yield iterable of keys
             if (key.getKey().equals(campId)) {
                 matchingRequests.add(requests.get(key));
             }
@@ -96,7 +96,7 @@ public class EnquiryRequestService implements IRequestService {
 
         for (SimpleEntry<Integer, String> key : requests.keySet()) {
             if (key.getValue().equals(uId)) {
-                matchingRequests.add(requests.get(key));
+                matchingRequests.add(requests.get(key)); 
             }
         }
 

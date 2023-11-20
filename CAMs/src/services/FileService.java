@@ -25,7 +25,7 @@ public class FileService {
     /**
      * Reads user data from CSV files and populates the DataStore with Student and Staff objects.
      *
-     * @throws FileNotFoundException If the specified CSV file is not found.
+     * @throws FileNotFoundException If the specified CSV file is not found, TODO catch
      */
     public static void readUserFromCsv() throws FileNotFoundException {
         String workspacePath = System.getProperty("user.dir");
@@ -92,8 +92,8 @@ public class FileService {
     /**
      * Generates a CSV file from Camp objects, allowing customization of columns to include.
      *
-     * @param sc    The Scanner object for user input.
-     * @param camps The list of camp IDs to generate CSV from.
+     * @param sc    The Scanner object for user input
+     * @param camps The list of camp IDs to generate CSV from
      */
     public static void generateCsvFromCamp(Scanner sc, ArrayList<Integer> camps) {
         ArrayList<String> col = generateCsvHeader();
@@ -135,8 +135,8 @@ public class FileService {
     /**
      * Extracts the user ID from an email address.
      *
-     * @param email The email address to extract the user ID from.
-     * @return The extracted user ID.
+     * @param email The email address to extract the user ID from
+     * @return The extracted user ID
      */
     private static String extractId(String email) {
         int atIndex = email.indexOf("@");
@@ -149,10 +149,10 @@ public class FileService {
     /**
      * Converts a Camp object to a CSV-formatted string with customizable columns.
      *
-     * @param camp           The Camp object to convert.
-     * @param includeHeaders Flag indicating whether to include column headers in the CSV.
-     * @param columns        The list of columns to include in the CSV.
-     * @return The CSV-formatted string representing the Camp object.
+     * @param camp           The Camp object to convert
+     * @param includeHeaders Flag indicating whether to include column headers in the CSV
+     * @param columns        The list of columns to include in the CSV
+     * @return The CSV-formatted string representing the Camp object
      */
     public static String campToCsv(Camp camp, boolean includeHeaders, ArrayList<String> columns) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -187,7 +187,7 @@ public class FileService {
     /**
      * Generates a list of column headers for the CSV file.
      *
-     * @return The list of column headers.
+     * @return The list of column headers
      */
     public static ArrayList<String> generateCsvHeader() {
         ArrayList<String> headers = new ArrayList<>();
@@ -211,8 +211,8 @@ public class FileService {
     /**
      * Formats a list of date ranges into a string for CSV output.
      *
-     * @param dateList The list of date ranges.
-     * @return The formatted string.
+     * @param dateList The list of date ranges
+     * @return The formatted string
      */
     private static String formatDates(ArrayList<SimpleEntry<LocalDateTime, LocalDateTime>> dateList) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -229,8 +229,8 @@ public class FileService {
     /**
      * Escapes a CSV field to handle null values and fields containing commas.
      *
-     * @param field The field to escape.
-     * @return The escaped CSV field.
+     * @param field The field to escape
+     * @return The escaped CSV field
      */
     private static String escapeCsvField(String field) {
         return (field != null && field.contains(",")) ? "\"" + field + "\"" : field;
