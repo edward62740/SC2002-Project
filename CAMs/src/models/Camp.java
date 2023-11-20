@@ -13,7 +13,7 @@ import enums.UserGroup;
  * staff information, committee, registered students, and a description.
  * Each camp instance is uniquely identified by its camp ID, and the ID must
  * be aliased by an integer ID key for each instance in the data store.
- * More info on reference to instances of Camp in {@link DataStore}.
+ * More info on reference to instances of Camp in {@code DataStore}.
  */
 public class Camp {
 
