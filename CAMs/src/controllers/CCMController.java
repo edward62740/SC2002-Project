@@ -290,7 +290,7 @@ public class CCMController extends UserController {
 				}
 				input = "";
 				do {
-					utils.InputParser.parseInString(sc, "Enter the response. Enter 'C' to cancel.", INPUT_MAX_ATTEMPTS,
+					input = utils.InputParser.parseInString(sc, "Enter the response. Enter 'C' to cancel.", INPUT_MAX_ATTEMPTS,
 							"C");
 				} while (input == null);
 				if (enquiryService.handleRequest(req.get(sel), true, input))
