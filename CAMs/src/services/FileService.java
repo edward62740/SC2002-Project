@@ -54,7 +54,7 @@ public class FileService {
 
             Student student = new Student(id, userGroup);
             DataStore.getStudents().put(id, student);
-            System.out.println("Loaded user: " + id);
+            System.out.println("[\u001B[32m  OK  \u001B[0m] Loaded user: " + id);
         }
 
         // Read Staff data
@@ -81,12 +81,13 @@ public class FileService {
 
             Staff staff = new Staff(id, userGroup);
             DataStore.getStaff().put(id, staff);
-            System.out.println("Loaded user: " + id);
+            System.out.println("[\u001B[32m  OK  \u001B[0m] Loaded user: " + id);
         }
 
         // Close the scanners
         studentScanner.close();
         staffScanner.close();
+        System.out.println("[\u001B[32m  OK  \u001B[0m] Done loading users. ");
     }
 
     /**

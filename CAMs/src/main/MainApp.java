@@ -30,14 +30,14 @@ public class MainApp {
 		{
 
 			/* Adding stuff to test the program logic.. remove during deployment */
-			System.out.println(System.getProperty("java.runtime.version"));
+			
 			try {
 				FileService.readUserFromCsv();
 			} catch (FileNotFoundException e) {
 
 				e.printStackTrace();
 			}
-			System.out.println(System.getProperty("java.runtime.version"));
+			System.out.println("[      ] JDK Ver "+ System.getProperty("java.runtime.version"));
 			System.out.println("Starting CAMs...");
 			TimeUnit.MILLISECONDS.sleep(500);
 			
