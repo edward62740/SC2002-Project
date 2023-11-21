@@ -4,13 +4,13 @@ package enums;
  * The {@link UserGroup} enumeration represents different user groups or faculties.
  * <ul>
  * <li>{@link #PACE}: PACE (College of Professional and Continuing Education)</li>
- * <li>{@link #CoE}: College of Engineering</li>
+ * <li>{@link #CoE}: College of Enginering</li>
  * <li>{@link #CoHASS}: College of Humanities, Arts, and Social Sciences</li>
  * <li>{@link #CoS}: College of Science</li>
  * <li>{@link #LKCMedicine}: Lee Kong Chian School of Medicine</li>
  * <li>{@link #NBS}: Nanyang Business School</li>
  * <li>{@link #NIE}: National Institute of Education</li>
- * <li>{@link #RSIS}: S. Rajaratnam School of International Studies</li>
+ * <li>{@link #RSIS}: S Rajaratnam School of International Studies</li>
  * <li>{@link #ADM}: School of Art, Design and Media</li>
  * <li>{@link #SBS}: School of Biological Sciences</li>
  * <li>{@link #CCEB}: School of Chemical and Biomedical Engineering</li>
@@ -24,7 +24,7 @@ package enums;
  * <li>{@link #SSS}: School of Social Sciences</li>
  * <li>{@link #ASE}: Asian School of the Environment</li>
  * <li>{@link #WKWSCI}: Wee Kim Wee School of Communication and Information</li>
- * <li>{@link #ALL}: All user groups (generic or unspecified)</li>
+ * <li>{@link #ALL}: All unspecified</li>
  * </ul>
  */
 public enum UserGroup {
@@ -34,7 +34,7 @@ public enum UserGroup {
     PACE,
 
     /**
-     * College of Engineering
+     * College of Enginering
      */
     CoE,
 
@@ -64,7 +64,7 @@ public enum UserGroup {
     NIE,
 
     /**
-     * S. Rajaratnam School of International Studies
+     * S Rajaratnam School of International Studies
      */
     RSIS,
 
@@ -134,7 +134,7 @@ public enum UserGroup {
     WKWSCI,
 
     /**
-     * All user groups (generic or unspecified)
+     * other
      */
     ALL
 }

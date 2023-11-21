@@ -12,7 +12,7 @@ public class UserController {
 
 	
 	/**
-	 * Instance of {@link Scanner}. Used to read input from user.
+	 * Instance of {@link Scanner}. Used to read input from user..
 	 */
 	protected static final Scanner sc = new Scanner(System.in);
 

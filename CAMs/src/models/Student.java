@@ -29,8 +29,8 @@ public class Student extends User {
      * Constructs a new Student with the specified user ID, faculty, and initializes
      * the role as STUDENT. Initializes the camp-related attributes.
      *
-     * @param id  The user ID.
-     * @param fac The user's faculty defined by UserGroup.
+     * @param id  The user ID
+     * @param fac The user's faculty defined by UserGroup
      */
     public Student(String id, UserGroup fac) {
         super(id, fac, UserRole.STUDENT);
@@ -62,6 +62,7 @@ public class Student extends User {
     /**
      * Removes a camp ID from the list of camps that this student is registered for.
      * Adds the removed camp ID to the list of previous camps.
+     * Note that this ensures that the two lists are pairwise disjoint as there is no setter for prevCamps.
      *
      * @param k The camp ID to remove.
      * @return true if the removal is successful, false otherwise.
@@ -78,7 +79,7 @@ public class Student extends User {
     /**
      * Gets the list of camp IDs that this student was previously registered for.
      *
-     * @return The list of previous camp IDs.
+     * @return The list of previous camp IDs
      */
     public ArrayList<Integer> getPrevCamps() {
         return prevCamps;
