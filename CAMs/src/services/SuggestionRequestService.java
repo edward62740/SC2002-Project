@@ -26,6 +26,13 @@ public class SuggestionRequestService implements IRequestService {
 		if(DataStore.getCamps().containsKey(campId))
 		{
 			DataStore.getSuggestions().put(p, req);
+			if(s.getRole() == UserRole.CCM && s instanceof Student)
+			{
+				Student st = (Student)s;
+				st.setPoints(st.getPoints() + 1); // give one point for making suggestion
+				
+			}
+
 			return true;
 		}
 		return false;
